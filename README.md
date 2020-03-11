@@ -25,11 +25,12 @@ https://github.com/buren/chartkick-phoenix-example
   - [] Simple auth flow (sign up/sign in)
     - [X] User schema and module, account context
     - [X] Log in, sign up, log out, user show
-    - [ ] Set up Telemetry module
-    * Metric increment for num logins
-    * Metric increment success/failure for logins
-    * Query duration for find and create queries
-    * Telemetry plug for landing page load time (add a random sleep between 1 and 5 seconds)
+    - [ ] Set up Telemetry + handler
+    - [ ] Set up LiveView to receive messages from Telemetry handler, display simple count for num logins
+    * Metric increment for num logins -> chart, count
+    * Metric increment success/failure for logins -> chart
+    * Query duration for find and create queries -> chart
+    * Telemetry plug for landing page load time (add a random sleep between 1 and 5 seconds) -> chart
 
 
 # Instrumenting LiveView w Telemetry
