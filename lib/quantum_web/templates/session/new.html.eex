@@ -1,0 +1,18 @@
+<div class='col-md-6'>
+  <h1>Log In</h1>
+  <%= form_for @conn, Routes.session_path(@conn, :new), [as: :session], fn f -> %>
+    <div class="form-group">
+      <%= label f, :email %>
+      <%= text_input f, :email, class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= label f, :password %>
+      <%= password_input f, :password, class: "form-control", placeholder: "Password" %>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      Log In
+    </button type="submit">
+    <%= link "Register", to: Routes.user_path(@conn, :new), class: "btn secondary-color" %>
+  <% end %>
+</div>
