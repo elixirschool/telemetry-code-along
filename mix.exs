@@ -44,7 +44,11 @@ defmodule Quantum.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:comeonin, "~> 5.0"},
-      {:bcrypt_elixir, "~> 2.0"}
+      {:bcrypt_elixir, "~> 2.0"},
+      {:telemetry, "~> 0.4.1"},
+      {:telemetry_metrics, "~> 0.4"},
+      {:telemetry_metrics_statsd, "~> 0.3.0"}
+      # {:phoenix_live_dashboard, github: "phoenixframework/phoenix_live_dashboard"}
     ]
   end
 

@@ -8,6 +8,7 @@ defmodule QuantumWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug QuantumWeb.Plugs.CurrentUser
+    plug Plug.Telemetry, event_prefix: [:browser, :request]
   end
 
   pipeline :api do
@@ -34,6 +35,13 @@ defmodule QuantumWeb.Router do
 
     get "/users/:id", UserController, :show
   end
+
+  # if Mix.env() == :dev do
+  #   scope "/" do
+  #     pipe_through :browser
+  #     live_dashboard "/dashboard"
+  #   end
+  # end
 
   # Other scopes may use custom stacks.
   # scope "/api", QuantumWeb do

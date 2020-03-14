@@ -82,3 +82,26 @@ end
 * Simple live view with three events--three buttons that you click to change color and each one has a sleep for a diff amount of time.
 * Instrument duration of "request/response" for each event type, register LV telemetry handler to receive telemetry events, that handler can send to our dashboard LV. Question: Same telemetry event handler for all events or separate for LV vs. application? I.e. separation of concerns with telemetry event handling modules or just one giant one?
 * prob. want to play around with metric label names and tags
+
+# Instrumenting Phoenix with Telemetry + StatsD
+https://hexdocs.pm/telemetry_metrics/Telemetry.Metrics.html
+https://hexdocs.pm/telemetry_metrics_statsd/TelemetryMetricsStatsd.html
+https://github.com/beam-telemetry/telemetry_metrics_statsd/issues/15
+## Next Steps
+* Can the reporter support Dogstatsd events? Can we hack it?
+* Run statsd to view output for each of the mapped metrics
+* Verify how to report the "free" metrics you can hook into:
+(remember summary == timing/duration)
+  * HTTP request duration by route
+  * HTTP request count by route
+  * Ecto query duration by query
+  * Ecto query count by query
+  * VM metrics (last_count == gauge) (need polling)
+* Reporting custom metrics to StatsD
+  * Emit telemetry event and define corresponding metric in Telemetry module
+  * Extending Telemetry to support Datadog events
+    * Hook into Telemetry event with custom handler
+* Configuring global tags and + prefixes: https://hexdocs.pm/telemetry_metrics_statsd/TelemetryMetricsStatsd.html#module-global-tags
+* Benefits:
+  * Abstract away common instrumentation needs and automatically send such events to your reporter of choice.
+  * Can still define custom handlers for events and do more stuff with them

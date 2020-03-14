@@ -1,6 +1,5 @@
 defmodule QuantumWeb.Plugs.CurrentUser do
   import Plug.Conn
-  import Phoenix.Controller
 
   alias Quantum.Accounts
 
