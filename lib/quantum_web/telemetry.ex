@@ -12,8 +12,8 @@ defmodule QuantumWeb.Telemetry do
       #  measurements: periodic_measurements(),
       #  period: 10_000},
       # Or TelemetryMetricsPrometheus or TelemetryMetricsFooBar
-      # {TelemetryMetricsStatsd, metrics: metrics()}
-      {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
+      {TelemetryMetricsStatsd, metrics: metrics()}
+      # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -35,8 +35,7 @@ defmodule QuantumWeb.Telemetry do
       summary("quantum.repo.query.decode_time", unit: {:native, :millisecond}),
       summary("quantum.repo.query.query_time", unit: {:native, :millisecond}),
       summary("quantum.repo.query.queue_time", unit: {:native, :millisecond}),
-      counter("quantum.repo.query.count", tags: [:source, :command]),
-      # counter("quantum.repo.query.total", tags: [:source, :command]),
+      counter("quantum.repo.query.count", tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
 
       # Phoenix Time Metrics
       summary("phoenix.endpoint.stop.duration",
@@ -52,6 +51,12 @@ defmodule QuantumWeb.Telemetry do
         tags: [:controller, :action]
       )
     ]
+  end
+
+  def query_metatdata(%{source: source, result: {_, %{command: command}}}) do
+    IO.puts "TAG VALUES"
+    IO.inspect(%{source: source, command: command})
+    %{source: source, command: command}
   end
 
   # defp periodic_measurements do

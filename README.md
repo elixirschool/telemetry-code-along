@@ -79,17 +79,25 @@ end
 
 
 ## Implementation Plan
+
 * Simple live view with three events--three buttons that you click to change color and each one has a sleep for a diff amount of time.
 * Instrument duration of "request/response" for each event type, register LV telemetry handler to receive telemetry events, that handler can send to our dashboard LV. Question: Same telemetry event handler for all events or separate for LV vs. application? I.e. separation of concerns with telemetry event handling modules or just one giant one?
 * prob. want to play around with metric label names and tags
 
-# Instrumenting Phoenix with Telemetry + StatsD
-https://hexdocs.pm/telemetry_metrics/Telemetry.Metrics.html
-https://hexdocs.pm/telemetry_metrics_statsd/TelemetryMetricsStatsd.html
-https://github.com/beam-telemetry/telemetry_metrics_statsd/issues/15
-## Next Steps
+## Instrumenting Phoenix with Telemetry + StatsD
+
+### Resources
+
+* https://hexdocs.pm/telemetry_metrics/Telemetry.Metrics.html
+* https://hexdocs.pm/telemetry_metrics_statsd/TelemetryMetricsStatsd.html
+* https://github.com/beam-telemetry/telemetry_metrics_statsd/issues/15
+
+### Next Steps
+
 * Can the reporter support Dogstatsd events? Can we hack it?
+* Which telemetry events is Phoenix/Ecto/etc emitted for us for free?
 * Run statsd to view output for each of the mapped metrics
+  * [Installing statsd for mac](https://anomaly.io/statsd-install-and-config/index.html)
 * Verify how to report the "free" metrics you can hook into:
 (remember summary == timing/duration)
   * HTTP request duration by route
