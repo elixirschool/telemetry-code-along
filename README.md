@@ -330,6 +330,7 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
   * Attach in telemetry module (?)
   * Good candidate--custom interaction error count - log in failure/success?
 * Instrumentating LiveView with Phoenix's OOTB Telemetry events
+* Telemetry under the hood - trace the flow of PHoenix/Ecto/app code emitting event and telemtry looking up event handle and calling it. Look at tags, etc.
 
 ### Questions
 * How to instrument success/failure of web requests?
