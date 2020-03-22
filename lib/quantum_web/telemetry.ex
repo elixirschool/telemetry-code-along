@@ -12,6 +12,7 @@ defmodule QuantumWeb.Telemetry do
       #  measurements: periodic_measurements(),
       #  period: 10_000},
       # Or TelemetryMetricsPrometheus or TelemetryMetricsFooBar
+      # {TelemetryMetricsStatsd, metrics: metrics(), formatter: :datadog} # for datadog, add prefix: "quantum", global_tags: [env: Mix.env()] but global tags prob. best handled by DD agent conf
       {TelemetryMetricsStatsd, metrics: metrics()}
       # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
     ]
@@ -31,33 +32,39 @@ defmodule QuantumWeb.Telemetry do
       last_value("quantum.worker.message_queue_len"),
 
       # Database Time Metrics
-      summary("quantum.repo.query.total_time", unit: {:native, :millisecond}),
+      summary("quantum.repo.query.total_time", unit: {:native, :millisecond}, tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
       summary("quantum.repo.query.decode_time", unit: {:native, :millisecond}),
       summary("quantum.repo.query.query_time", unit: {:native, :millisecond}),
       summary("quantum.repo.query.queue_time", unit: {:native, :millisecond}),
+
+      # Database Count Metrics
       counter("quantum.repo.query.count", tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
 
       # Phoenix Time Metrics
-      summary("phoenix.endpoint.stop.duration",
-              unit: {:native, :millisecond}),
+      # summary("phoenix.endpoint.stop.duration",
+              # unit: {:native, :millisecond}, tag_values: &__MODULE__.endpoint_metadata/1),
       summary(
         "phoenix.router_dispatch.stop.duration",
         unit: {:native, :millisecond},
-        tags: [:plug]
+        tags: [:plug, :plug_opts] # for datadog, add :route and view metric over route
       ),
 
+      # Phoenix Count Metrics
       counter(
-        "http.request.count",
-        tags: [:controller, :action]
+        "phoenix.router_dispatch.stop.duration",
+        tags: [:plug, :plug_opts] # for datadog, add :route and view metric over route
       )
     ]
   end
 
   def query_metatdata(%{source: source, result: {_, %{command: command}}}) do
-    IO.puts "TAG VALUES"
-    IO.inspect(%{source: source, command: command})
     %{source: source, command: command}
   end
+
+  # def endpoint_metadata(metadata) do
+  #   IO.puts "ENDPOINT DATA:"
+  #   IO.inspect metadata
+  # end
 
   # defp periodic_measurements do
   #   [

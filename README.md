@@ -95,16 +95,23 @@ end
 ### Next Steps
 
 * Can the reporter support Dogstatsd events? Can we hack it?
-* Which telemetry events is Phoenix/Ecto/etc emitted for us for free?
-* Run statsd to view output for each of the mapped metrics
+- [X] Which telemetry events is Phoenix/Ecto/etc emitted for us for free?
+
+- [X] Run statsd to view output for each of the mapped metrics
   * [Installing statsd for mac](https://anomaly.io/statsd-install-and-config/index.html)
+
 * Verify how to report the "free" metrics you can hook into:
 (remember summary == timing/duration)
+  * [List all](https://til.hashrocket.com/posts/o17nfvwzbo--list-all-telemetry-event-handlers)
   * HTTP request duration by route
-  * HTTP request count by route
-  * Ecto query duration by query
-  * Ecto query count by query
+    * [Source](https://github.com/phoenixframework/phoenix/blob/d4596650df21e7e0603debcb5f2ad25eb9ac082d/lib/phoenix/router.ex)
+  * [HTTP request count by route](https://app.datadoghq.com/dashboard/dmk-qzr-9sf/sophies-timeboard-22-mar-2020-1214?from_ts=1584882280954&fullscreen_section=overview&fullscreen_widget=4612552948460480&live=true&tile_size=m&to_ts=1584896680954&fullscreen_start_ts=1584882486335&fullscreen_end_ts=1584896886335&fullscreen_paused=false)
+  * [Ecto query duration by query](https://app.datadoghq.com/metric/explorer?live=true&page=0&is_auto=false&from_ts=1584889953332&to_ts=1584893553332&tile_size=m&exp_metric=quantum.repo.query.total_time.count&exp_scope=command%3Aselect%2Csource%3Ausers&exp_agg=avg&exp_row_type=metric&fullscreen=1011)
+  * [Ecto query count by query](https://app.datadoghq.com/metric/summary?filter=quantum.repo.query&metric=quantum.repo.query.count)
   * VM metrics (last_count == gauge) (need polling)
+  * Live View?
+    * [Channel joined](https://github.com/phoenixframework/phoenix/blob/8a4aa4eed0de69f94ab09eca157c87d9bd204168/lib/phoenix/channel/server.ex#L319)
+    * [Channel handle_in](https://github.com/phoenixframework/phoenix/blob/8a4aa4eed0de69f94ab09eca157c87d9bd204168/lib/phoenix/channel/server.ex#L319)
 * Reporting custom metrics to StatsD
   * Emit telemetry event and define corresponding metric in Telemetry module
   * Extending Telemetry to support Datadog events
@@ -113,3 +120,188 @@ end
 * Benefits:
   * Abstract away common instrumentation needs and automatically send such events to your reporter of choice.
   * Can still define custom handlers for events and do more stuff with them
+
+### Metrics Report
+
+```bash
+Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
+{
+  counters: {
+    'statsd.bad_lines_seen': 0,
+    'statsd.packets_received': 11,
+    'statsd.metrics_received': 40,
+    'quantum.repo.query.count.users.select': 6,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': 0,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': 1,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': 1,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': 2,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': 1
+  },
+  timers: {
+    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': [],
+    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': [],
+    'quantum.repo.query.total_time.users.select': [ 0, 0, 0, 0, 1, 1 ],
+    'quantum.repo.query.decode_time': [ 0, 0, 0, 0, 0, 0 ],
+    'quantum.repo.query.query_time': [ 0, 0, 0, 0, 0, 0 ],
+    'quantum.repo.query.queue_time': [ 0, 0, 0, 0, 0, 1 ],
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': [ 4 ],
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': [],
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': [ 3 ],
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': [ 1, 8 ],
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': [ 245 ]
+  },
+  gauges: { 'statsd.timestamp_lag': 0 },
+  timer_data: {
+    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': { count_ps: 0, count: 0 },
+    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': { count_ps: 0, count: 0 },
+    'quantum.repo.query.total_time.users.select': {
+      count_90: 5,
+      mean_90: 0.2,
+      upper_90: 1,
+      sum_90: 1,
+      sum_squares_90: 1,
+      std: 0.4714045207910317,
+      upper: 1,
+      lower: 0,
+      count: 6,
+      count_ps: 0.6,
+      sum: 2,
+      sum_squares: 2,
+      mean: 0.3333333333333333,
+      median: 0
+    },
+    'quantum.repo.query.decode_time': {
+      count_90: 5,
+      mean_90: 0,
+      upper_90: 0,
+      sum_90: 0,
+      sum_squares_90: 0,
+      std: 0,
+      upper: 0,
+      lower: 0,
+      count: 6,
+      count_ps: 0.6,
+      sum: 0,
+      sum_squares: 0,
+      mean: 0,
+      median: 0
+    },
+    'quantum.repo.query.query_time': {
+      count_90: 5,
+      mean_90: 0,
+      upper_90: 0,
+      sum_90: 0,
+      sum_squares_90: 0,
+      std: 0,
+      upper: 0,
+      lower: 0,
+      count: 6,
+      count_ps: 0.6,
+      sum: 0,
+      sum_squares: 0,
+      mean: 0,
+      median: 0
+    },
+    'quantum.repo.query.queue_time': {
+      count_90: 5,
+      mean_90: 0,
+      upper_90: 0,
+      sum_90: 0,
+      sum_squares_90: 0,
+      std: 0.372677996249965,
+      upper: 1,
+      lower: 0,
+      count: 6,
+      count_ps: 0.6,
+      sum: 1,
+      sum_squares: 1,
+      mean: 0.16666666666666666,
+      median: 0
+    },
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': {
+      count_90: 1,
+      mean_90: 4,
+      upper_90: 4,
+      sum_90: 4,
+      sum_squares_90: 16,
+      std: 0,
+      upper: 4,
+      lower: 4,
+      count: 1,
+      count_ps: 0.1,
+      sum: 4,
+      sum_squares: 16,
+      mean: 4,
+      median: 4
+    },
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': { count_ps: 0, count: 0 },
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': {
+      count_90: 1,
+      mean_90: 3,
+      upper_90: 3,
+      sum_90: 3,
+      sum_squares_90: 9,
+      std: 0,
+      upper: 3,
+      lower: 3,
+      count: 1,
+      count_ps: 0.1,
+      sum: 3,
+      sum_squares: 9,
+      mean: 3,
+      median: 3
+    },
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': {
+      count_90: 2,
+      mean_90: 4.5,
+      upper_90: 8,
+      sum_90: 9,
+      sum_squares_90: 65,
+      std: 3.5,
+      upper: 8,
+      lower: 1,
+      count: 2,
+      count_ps: 0.2,
+      sum: 9,
+      sum_squares: 65,
+      mean: 4.5,
+      median: 4.5
+    },
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': {
+      count_90: 1,
+      mean_90: 245,
+      upper_90: 245,
+      sum_90: 245,
+      sum_squares_90: 60025,
+      std: 0,
+      upper: 245,
+      lower: 245,
+      count: 1,
+      count_ps: 0.1,
+      sum: 245,
+      sum_squares: 60025,
+      mean: 245,
+      median: 245
+    }
+  },
+  counter_rates: {
+    'statsd.bad_lines_seen': 0,
+    'statsd.packets_received': 1.1,
+    'statsd.metrics_received': 4,
+    'quantum.repo.query.count.users.select': 0.6,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': 0,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': 0.1,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': 0.1,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': 0.2,
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': 0.1
+  },
+  sets: {},
+  pctThreshold: [ 90 ]
+}
+```
+
+## TODO
+
+* LiveView metrics with channel joined and channel handled_in
+* VM metrics with polling
+* Visualize DD reporting by using DD formatter but running regular statsd, grab log statement from error message
