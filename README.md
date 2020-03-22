@@ -302,6 +302,39 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
 
 ## TODO
 
+* Success/failure web request response instrumentation
 * LiveView metrics with channel joined and channel handled_in
 * VM metrics with polling
 * Visualize DD reporting by using DD formatter but running regular statsd, grab log statement from error message
+
+## Notes
+* We're instrumenting for free:
+  * Database query duration and counts
+  * HTTP request duration and counts
+
+## Blog Post
+* What is observability? What is instrumentation?
+* Common needs: web requests, database queries
+* OOTB instrumentation with Elixir Telemetry
+  * We'll get web requests, database queries, VM monitoring
+  * Implementation
+    * Use Telemetry package
+    * Establish module that defines which events you are listening to--this attaches them to the default handler.
+      * Look at source code in Phoenix that emits those telemetry events.
+      * Tagging - slice up HTTP requests by contoller + action; DB queries by source and command. Tags become part of metric name in standard statsd formatting. Custom tag values functions
+      * Note on Datadog formatter
+        * Tags translate into metric tags (show the mapping)
+        * Can leverage prefix, global tags, HTTP route tag now more usefully
+* Custom instrumentation
+  * Define telemetry handler
+  * Attach in telemetry module (?)
+  * Good candidate--custom interaction error count - log in failure/success?
+* Instrumentating LiveView with Phoenix's OOTB Telemetry events
+
+### Questions
+* How to instrument success/failure of web requests?
+* Is this a good use case for Telemetry plug or does we get it OOTB?
+  * Maybe use render errors event? https://github.com/phoenixframework/phoenix/blob/00a022fbbf25a9d0845329161b1bc1a192c2d407/lib/phoenix/endpoint/render_errors.ex
+
+### Ecto Telemetry Event Source Code
+* https://github.com/elixir-ecto/ecto/blob/2aca7b28eef486188be66592055c7336a80befe9/lib/ecto/repo.ex#L95
