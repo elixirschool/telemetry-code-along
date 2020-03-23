@@ -306,7 +306,7 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
 
 ## TODO
 
-* Success/failure web request response instrumentation
+- [X] Success/failure web request response instrumentation
 * LiveView metrics with channel joined and channel handled_in
 * VM metrics with polling
 * Visualize DD reporting by using DD formatter but running regular statsd, grab log statement from error message
