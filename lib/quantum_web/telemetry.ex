@@ -54,8 +54,20 @@ defmodule QuantumWeb.Telemetry do
         "phoenix.router_dispatch.stop.count",
         tag_values: &__MODULE__.endpoint_metadata/1,
         tags: [:plug, :plug_opts, :status] # for datadog, add :route and view metric over route
+      ),
+
+      # :telemetry.execute([:phoenix, :error_rendered], %{duration: duration}, metadata)
+      # make sure you set debug error to false in dev.exs b/c otherwise you see helpful routes pager, this way it renders your error view
+      counter(
+        "phoenix.error_rendered.duration",
+        tag_values: &__MODULE__.error_request_metadata/1,
+        tags: [:status, :request_path]
       )
     ]
+  end
+
+  def error_request_metadata(%{conn: %{request_path: request_path}, status: status}) do
+    %{status: status, request_path: request_path}
   end
 
   def query_metatdata(%{source: source, result: {_, %{command: command}}}) do

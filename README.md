@@ -135,7 +135,11 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
     'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': 1,
     'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': 1,
     'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': 2,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': 1
+    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': 1,
+    # error request handling
+    'phoenix.error_rendered.duration.404.-blah': 0,
+    'phoenix.error_rendered.duration.404.-blah-sophie-123': 0,
+    'phoenix.error_rendered.duration.500.-': 0
   },
   timers: {
     'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': [],
@@ -320,6 +324,7 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
   * Implementation
     * Use Telemetry package
     * Establish module that defines which events you are listening to--this attaches them to the default handler.
+      * Go through all of the OOTB events and link to source code
       * Look at source code in Phoenix that emits those telemetry events.
       * Tagging - slice up HTTP requests by contoller + action; DB queries by source and command. Tags become part of metric name in standard statsd formatting. Custom tag values functions
       * Note on Datadog formatter
@@ -330,12 +335,12 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
   * Attach in telemetry module (?)
   * Good candidate--custom interaction error count - log in failure/success?
 * Instrumentating LiveView with Phoenix's OOTB Telemetry events
-* Telemetry under the hood - trace the flow of PHoenix/Ecto/app code emitting event and telemtry looking up event handle and calling it. Look at tags, etc.
+* Telemetry under the hood - trace the flow of PHoenix/Ecto/app code emitting event and telemetry looking up event handle and calling it. Look at tags, etc.
 
 ### Questions
-* How to instrument success/failure of web requests?
-* Is this a good use case for Telemetry plug or does we get it OOTB?
-  * Maybe use render errors event? https://github.com/phoenixframework/phoenix/blob/00a022fbbf25a9d0845329161b1bc1a192c2d407/lib/phoenix/endpoint/render_errors.ex
+- [X] How to instrument success/failure of web requests?
+  * Use render errors event? https://github.com/phoenixframework/phoenix/blob/00a022fbbf25a9d0845329161b1bc1a192c2d407/lib/phoenix/endpoint/render_errors.ex
+- Refactoring Telemetry module--where does it live, can we break out into sub-modules, do we need a context, etc.
 
 ### Ecto Telemetry Event Source Code
 * https://github.com/elixir-ecto/ecto/blob/2aca7b28eef486188be66592055c7336a80befe9/lib/ecto/repo.ex#L95
