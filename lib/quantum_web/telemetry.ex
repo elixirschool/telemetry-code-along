@@ -51,8 +51,9 @@ defmodule QuantumWeb.Telemetry do
 
       # Phoenix Count Metrics
       counter(
-        "phoenix.router_dispatch.stop.duration",
-        tags: [:plug, :plug_opts] # for datadog, add :route and view metric over route
+        "phoenix.router_dispatch.stop.count",
+        tag_values: &__MODULE__.endpoint_metadata/1,
+        tags: [:plug, :plug_opts, :status] # for datadog, add :route and view metric over route
       )
     ]
   end
@@ -61,10 +62,9 @@ defmodule QuantumWeb.Telemetry do
     %{source: source, command: command}
   end
 
-  # def endpoint_metadata(metadata) do
-  #   IO.puts "ENDPOINT DATA:"
-  #   IO.inspect metadata
-  # end
+  def endpoint_metadata(%{conn: %{status: status}, plug: plug, plug_opts: plug_opts}) do
+    %{status: status, plug: plug, plug_opts: plug_opts}
+  end
 
   # defp periodic_measurements do
   #   [
