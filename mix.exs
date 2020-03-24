@@ -47,7 +47,8 @@ defmodule Quantum.MixProject do
       {:bcrypt_elixir, "~> 2.0"},
       {:telemetry, "~> 0.4.1"},
       {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_metrics_statsd, "~> 0.3.0"}
+      {:telemetry_metrics_statsd, "~> 0.3.0"},
+      {:telemetry_poller, "~> 0.4"}
       # {:phoenix_live_dashboard, github: "phoenixframework/phoenix_live_dashboard"}
     ]
   end

@@ -22,25 +22,26 @@ defmodule QuantumWeb.Telemetry do
 
   defp metrics do
     [
-      # VM Metrics
+      # VM Metrics - gauge
       last_value("vm.memory.total", unit: :byte),
       last_value("vm.total_run_queue_lengths.total"),
       last_value("vm.total_run_queue_lengths.cpu"),
       last_value("vm.total_run_queue_lengths.io"),
 
-      last_value("quantum.worker.memory", unit: :byte),
-      last_value("quantum.worker.message_queue_len"),
+      # Custom Polled Metrics
+      # last_value("quantum.worker.memory", unit: :byte),
+      # last_value("quantum.worker.message_queue_len"),
 
-      # Database Time Metrics
+      # Database Time Metrics - timing
       summary("quantum.repo.query.total_time", unit: {:native, :millisecond}, tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
       summary("quantum.repo.query.decode_time", unit: {:native, :millisecond}),
       summary("quantum.repo.query.query_time", unit: {:native, :millisecond}),
       summary("quantum.repo.query.queue_time", unit: {:native, :millisecond}),
 
-      # Database Count Metrics
+      # Database Count Metrics - count
       counter("quantum.repo.query.count", tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
 
-      # Phoenix Time Metrics
+      # Phoenix Time Metrics - timing
       # summary("phoenix.endpoint.stop.duration",
               # unit: {:native, :millisecond}, tag_values: &__MODULE__.endpoint_metadata/1),
       summary(
@@ -49,7 +50,7 @@ defmodule QuantumWeb.Telemetry do
         tags: [:plug, :plug_opts] # for datadog, add :route and view metric over route
       ),
 
-      # Phoenix Count Metrics
+      # Phoenix Count Metrics - count
       counter(
         "phoenix.router_dispatch.stop.count",
         tag_values: &__MODULE__.endpoint_metadata/1,
@@ -78,6 +79,7 @@ defmodule QuantumWeb.Telemetry do
     %{status: status, plug: plug, plug_opts: plug_opts}
   end
 
+  # custom polling for worker metrics 
   # defp periodic_measurements do
   #   [
   #     {:process_info,

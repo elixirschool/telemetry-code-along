@@ -28,4 +28,5 @@
   "telemetry": {:hex, :telemetry, "0.4.1", "ae2718484892448a24470e6aa341bc847c3277bfb8d4e9289f7474d752c09c7f", [:rebar3], [], "hexpm", "4738382e36a0a9a2b6e25d67c960e40e1a2c95560b9f936d8e29de8cd858480f"},
   "telemetry_metrics": {:hex, :telemetry_metrics, "0.4.1", "71f830b0b74932c98ff6e9a1a1d653ba2b67af6ab94f221930aded7b8b1ed73c", [:mix], [{:telemetry, "~> 0.4", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "0a1e874fd1a934877cd9a8a220e6744b8a2fdcb6c45c150fd98890a618209ebf"},
   "telemetry_metrics_statsd": {:hex, :telemetry_metrics_statsd, "0.3.0", "ce81e3681e8e02fbd72cbc0394225eab5b2bb27e9a1f322d8b09fb7b65876c22", [:mix], [{:telemetry_metrics, "~> 0.3", [hex: :telemetry_metrics, repo: "hexpm", optional: false]}], "hexpm", "effcfb97405a64cb78b4cc3cc0ef1d3c7066d487115e164b6483bedd6d92abd0"},
+  "telemetry_poller": {:hex, :telemetry_poller, "0.5.0", "4770888ef85599ead39c7f51d6b4b62306e602d96c69b2625d54dea3d9a5204b", [:rebar3], [{:telemetry, "~> 0.4", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "69e4e8e65b0ae077c9e14cd5f42c7cc486de0e07ac6e3409e6f0e52699a7872c"},
 }

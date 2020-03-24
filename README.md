@@ -154,7 +154,13 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
     'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': [ 1, 8 ],
     'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': [ 245 ]
   },
-  gauges: { 'statsd.timestamp_lag': 0 },
+  gauges: {
+   'vm.memory.total': 50191248,
+   'vm.total_run_queue_lengths.total': 0,
+   'vm.total_run_queue_lengths.cpu': 0,
+   'vm.total_run_queue_lengths.io': 0,
+   'statsd.timestamp_lag': 0
+  },
   timer_data: {
     'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': { count_ps: 0, count: 0 },
     'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': { count_ps: 0, count: 0 },
