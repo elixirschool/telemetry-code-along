@@ -1,10 +1,10 @@
 defmodule QuantumWeb.Router do
   use QuantumWeb, :router
-
   pipeline :browser do
+    # plug :put_root_layout, {QuantumWeb.LayoutView, :app}
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug QuantumWeb.Plugs.CurrentUser
@@ -34,6 +34,7 @@ defmodule QuantumWeb.Router do
     delete "/logout", SessionController, :delete
 
     get "/users/:id", UserController, :show
+    live "/buttons", ButtonLive
   end
 
   # if Mix.env() == :dev do

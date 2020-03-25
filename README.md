@@ -121,204 +121,15 @@ end
   * Abstract away common instrumentation needs and automatically send such events to your reporter of choice.
   * Can still define custom handlers for events and do more stuff with them
 
-### Metrics Report
-
-```bash
-Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
-{
-  counters: {
-    'statsd.bad_lines_seen': 0,
-    'statsd.packets_received': 11,
-    'statsd.metrics_received': 40,
-    'quantum.repo.query.count.users.select': 6,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': 0,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': 1,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': 1,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': 2,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': 1,
-    # error request handling
-    'phoenix.error_rendered.duration.404.-blah': 0,
-    'phoenix.error_rendered.duration.404.-blah-sophie-123': 0,
-    'phoenix.error_rendered.duration.500.-': 0
-  },
-  timers: {
-    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': [],
-    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': [],
-    'quantum.repo.query.total_time.users.select': [ 0, 0, 0, 0, 1, 1 ],
-    'quantum.repo.query.decode_time': [ 0, 0, 0, 0, 0, 0 ],
-    'quantum.repo.query.query_time': [ 0, 0, 0, 0, 0, 0 ],
-    'quantum.repo.query.queue_time': [ 0, 0, 0, 0, 0, 1 ],
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': [ 4 ],
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': [],
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': [ 3 ],
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': [ 1, 8 ],
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': [ 245 ]
-  },
-  gauges: {
-   'vm.memory.total': 50191248,
-   'vm.total_run_queue_lengths.total': 0,
-   'vm.total_run_queue_lengths.cpu': 0,
-   'vm.total_run_queue_lengths.io': 0,
-   'statsd.timestamp_lag': 0
-  },
-  timer_data: {
-    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': { count_ps: 0, count: 0 },
-    'quantum.phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': { count_ps: 0, count: 0 },
-    'quantum.repo.query.total_time.users.select': {
-      count_90: 5,
-      mean_90: 0.2,
-      upper_90: 1,
-      sum_90: 1,
-      sum_squares_90: 1,
-      std: 0.4714045207910317,
-      upper: 1,
-      lower: 0,
-      count: 6,
-      count_ps: 0.6,
-      sum: 2,
-      sum_squares: 2,
-      mean: 0.3333333333333333,
-      median: 0
-    },
-    'quantum.repo.query.decode_time': {
-      count_90: 5,
-      mean_90: 0,
-      upper_90: 0,
-      sum_90: 0,
-      sum_squares_90: 0,
-      std: 0,
-      upper: 0,
-      lower: 0,
-      count: 6,
-      count_ps: 0.6,
-      sum: 0,
-      sum_squares: 0,
-      mean: 0,
-      median: 0
-    },
-    'quantum.repo.query.query_time': {
-      count_90: 5,
-      mean_90: 0,
-      upper_90: 0,
-      sum_90: 0,
-      sum_squares_90: 0,
-      std: 0,
-      upper: 0,
-      lower: 0,
-      count: 6,
-      count_ps: 0.6,
-      sum: 0,
-      sum_squares: 0,
-      mean: 0,
-      median: 0
-    },
-    'quantum.repo.query.queue_time': {
-      count_90: 5,
-      mean_90: 0,
-      upper_90: 0,
-      sum_90: 0,
-      sum_squares_90: 0,
-      std: 0.372677996249965,
-      upper: 1,
-      lower: 0,
-      count: 6,
-      count_ps: 0.6,
-      sum: 1,
-      sum_squares: 1,
-      mean: 0.16666666666666666,
-      median: 0
-    },
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': {
-      count_90: 1,
-      mean_90: 4,
-      upper_90: 4,
-      sum_90: 4,
-      sum_squares_90: 16,
-      std: 0,
-      upper: 4,
-      lower: 4,
-      count: 1,
-      count_ps: 0.1,
-      sum: 4,
-      sum_squares: 16,
-      mean: 4,
-      median: 4
-    },
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': { count_ps: 0, count: 0 },
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': {
-      count_90: 1,
-      mean_90: 3,
-      upper_90: 3,
-      sum_90: 3,
-      sum_squares_90: 9,
-      std: 0,
-      upper: 3,
-      lower: 3,
-      count: 1,
-      count_ps: 0.1,
-      sum: 3,
-      sum_squares: 9,
-      mean: 3,
-      median: 3
-    },
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': {
-      count_90: 2,
-      mean_90: 4.5,
-      upper_90: 8,
-      sum_90: 9,
-      sum_squares_90: 65,
-      std: 3.5,
-      upper: 8,
-      lower: 1,
-      count: 2,
-      count_ps: 0.2,
-      sum: 9,
-      sum_squares: 65,
-      mean: 4.5,
-      median: 4.5
-    },
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': {
-      count_90: 1,
-      mean_90: 245,
-      upper_90: 245,
-      sum_90: 245,
-      sum_squares_90: 60025,
-      std: 0,
-      upper: 245,
-      lower: 245,
-      count: 1,
-      count_ps: 0.1,
-      sum: 245,
-      sum_squares: 60025,
-      mean: 245,
-      median: 245
-    }
-  },
-  counter_rates: {
-    'statsd.bad_lines_seen': 0,
-    'statsd.packets_received': 1.1,
-    'statsd.metrics_received': 4,
-    'quantum.repo.query.count.users.select': 0.6,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.PageController.index': 0,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.UserController.show': 0.1,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.delete': 0.1,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.new': 0.2,
-    'phoenix.router_dispatch.stop.duration.Elixir.QuantumWeb.SessionController.create': 0.1
-  },
-  sets: {},
-  pctThreshold: [ 90 ]
-}
-```
-
 ## TODO
 
 - [X] Success/failure web request response instrumentation
-* LiveView metrics with channel joined and channel handled_in
+* LiveView metrics with channel joined and channel handled_in -> can't be done OOTB, blog post should explain, show channel source, link to LV issue
 * Three custom metrics:
   * Worker polling
   * Custom event polling
   * Telemetry plug
-  * Success/failure indicator 
+  - [X] LiveView handle event duration and timer
 - [X] VM metrics with polling
 * Visualize DD reporting by using DD formatter but running regular statsd, grab log statement from error message
 
@@ -326,10 +137,18 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
 * We're instrumenting for free:
   * Database query duration and counts
   * HTTP request duration and counts
+  * VM metrics
+* Telemetry event handling for free with Telemetry metrics module--can emit any event with `:telemetry.execute` (is this Erlang??) and don't need to define and attach custom handle module.
 
 ## Blog Post
 * What is observability? What is instrumentation?
 * Common needs: web requests, database queries
+* Show the DIY - define an event + module, attach, custom log in handler module to report, log, etc. This might be a good place to look under the hood at ETS.
+  * Reporter calls `telemetry.attach`
+  * Look in `telemetry.erl`:
+    * attach stores handler modules with associated events in ETS
+    * execute looks up the handler for the event in ETS and invokes it 
+* This is all abstracted away with Telemetry metrics!
 * OOTB instrumentation with Elixir Telemetry
   * We'll get web requests, database queries, VM monitoring
   * Implementation
@@ -341,12 +160,13 @@ Flushing stats at  Sun Mar 22 2020 13:36:41 GMT-0400 (Eastern Daylight Time)
       * Note on Datadog formatter
         * Tags translate into metric tags (show the mapping)
         * Can leverage prefix, global tags, HTTP route tag now more usefully
-* Custom instrumentation
+* Custom instrumentation -> not necessary, any event can be handled by one Telemetry module importing `Telemetry.Metrics`
   * Define telemetry handler
   * Attach in telemetry module (?)
   * Good candidate--custom interaction error count - log in failure/success?
-* Instrumentating LiveView with Phoenix's OOTB Telemetry events
-* Telemetry under the hood - trace the flow of PHoenix/Ecto/app code emitting event and telemetry looking up event handle and calling it. Look at tags, etc.
+* Instrumentating LiveView with Phoenix's OOTB Telemetry events - CAN'T! Worth noting and comparing to Phoenix channel OOTB telemetry events, link to issue.
+  * Custom duration and count instrumentation for
+* Telemetry under the hood - trace the flow of Phoenix/Ecto/app code emitting event and telemetry looking up event handle and calling it. Look at tags, etc.
 
 ### Questions
 - [X] How to instrument success/failure of web requests?

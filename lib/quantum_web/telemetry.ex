@@ -63,6 +63,16 @@ defmodule QuantumWeb.Telemetry do
         "phoenix.error_rendered.duration",
         tag_values: &__MODULE__.error_request_metadata/1,
         tags: [:status, :request_path]
+      ),
+
+      # LiveView metrics
+      summary(
+        "live.handle_event.button_click.duration"
+      ),
+      counter(
+        "live.handle_event.button_click.count",
+        tag_values: &__MODULE__.live_view_metadata/1,
+        tags: [:button]
       )
     ]
   end
@@ -79,7 +89,11 @@ defmodule QuantumWeb.Telemetry do
     %{status: status, plug: plug, plug_opts: plug_opts}
   end
 
-  # custom polling for worker metrics 
+  def live_view_metadata(%{assigns: %{selected_button: button}}) do
+    %{button: button}
+  end
+
+  # custom polling for worker metrics
   # defp periodic_measurements do
   #   [
   #     {:process_info,

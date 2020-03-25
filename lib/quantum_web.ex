@@ -20,7 +20,7 @@ defmodule QuantumWeb do
   def controller do
     quote do
       use Phoenix.Controller, namespace: QuantumWeb
-
+      import Phoenix.LiveView.Controller
       import Plug.Conn
       import QuantumWeb.Gettext
       alias QuantumWeb.Router.Helpers, as: Routes
@@ -43,6 +43,7 @@ defmodule QuantumWeb do
       import QuantumWeb.Gettext
       alias QuantumWeb.Router.Helpers, as: Routes
       import Quantum.Accounts.Auth, only: [signed_in?: 1]
+      import Phoenix.LiveView.Helpers
     end
   end
 
@@ -51,6 +52,7 @@ defmodule QuantumWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 

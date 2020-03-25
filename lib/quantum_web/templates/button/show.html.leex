@@ -1,0 +1,10 @@
+<h1>Buttons!</h1>
+<h3>Because, why not?</h3>
+<h4>Hi, <%= @current_user.email %>! Please select a button</h4>
+<button type="button" class="btn btn-primary btn-lg" phx-click="button_click" phx-value-button="blue" <%= if @selected_button == "blue", do: "disabled"%>>Blue Button</button>
+<button type="button" class="btn btn-secondary btn-lg" phx-click="button_click" phx-value-button="grey" <%= if @selected_button == "grey", do: "disabled"%>>Grey Button</button>
+<button type="button" class="btn btn-success btn-lg" phx-click="button_click" phx-value-button="green" <%= if @selected_button == "green", do: "disabled"%>>Green Button</button>
+<br><br>
+<div class="">
+  <h4>Selected: <%= @selected_button %></h4>
+</div>
