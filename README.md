@@ -147,7 +147,7 @@ end
   * Reporter calls `telemetry.attach`
   * Look in `telemetry.erl`:
     * attach stores handler modules with associated events in ETS
-    * execute looks up the handler for the event in ETS and invokes it 
+    * execute looks up the handler for the event in ETS and invokes it
 * This is all abstracted away with Telemetry metrics!
 * OOTB instrumentation with Elixir Telemetry
   * We'll get web requests, database queries, VM monitoring
@@ -161,9 +161,6 @@ end
         * Tags translate into metric tags (show the mapping)
         * Can leverage prefix, global tags, HTTP route tag now more usefully
 * Custom instrumentation -> not necessary, any event can be handled by one Telemetry module importing `Telemetry.Metrics`
-  * Define telemetry handler
-  * Attach in telemetry module (?)
-  * Good candidate--custom interaction error count - log in failure/success?
 * Instrumentating LiveView with Phoenix's OOTB Telemetry events - CAN'T! Worth noting and comparing to Phoenix channel OOTB telemetry events, link to issue.
   * Custom duration and count instrumentation for
 * Telemetry under the hood - trace the flow of Phoenix/Ecto/app code emitting event and telemetry looking up event handle and calling it. Look at tags, etc.
@@ -175,3 +172,34 @@ end
 
 ### Ecto Telemetry Event Source Code
 * https://github.com/elixir-ecto/ecto/blob/2aca7b28eef486188be66592055c7336a80befe9/lib/ecto/repo.ex#L95
+
+## To Do
+* Post 1: Intro to Telemetry in Elixir (covers: intro to obs, getting starting with hand-rolled approach, Telemetry under the hood)
+  * What is observability/why do we need it? What's so great about getting it with Telemetry lib?
+  * DIY metrics with Telemetry lib -> start with dummy Quantum app and emit event for every sign up (counter and duration)
+    * Define handler with callback. That callback does some reporting to StatsD, but can dummy this up.
+    * Attach handler to event
+    * Execute event
+  * Under the hood
+    * Telemetry attach adds to ETS
+    * Telemetry execute looks up handler in ETS and invokes it
+* We need abstraction! Right now, we hand-rolled:
+  * Handler module definition and callback
+  * Reporting code
+  * Calls to attach
+  * Even our call to execute seems kind of onerous--plenty of stuff that _everyone_ would want to instrument (HTTP request counts and durations, look at success/failure responses, Ecto query times)
+  * Elixir abstracts a lot of this away!
+    * Lots of OOTB events emitted--baked in telemetry events executed from Phoenix and Ecto source code and provides a family
+    * No need to define custom handlers, reporting logic and enact attach calls thanks to Elixir's family of Telemetry libs--metrics, polling, reporters.
+  * Post 2: OTTB Instrumentation with Telemetry Metrics, Polling and Reporters (covers OOTB instrumentation, usage of reporters, adding "custom" events with little effort or custom code)
+    * Up and running:
+      * Define module that uses telemetry metrics
+      * Declare which OOTB events you will listen to in your `metrics` function
+      * Start supervisor with Statsd reporter, VM polling in application.ex
+      * Closer look at events
+        * Each event source code, map execute to metric func, view in statsd and dogstatsd
+    * Under the hood to see that reporter calls attach, stores its own module name with event
+      * Telemetry calls execute, which looks up handler and invokes `handle_event`
+      * Reporter's `handle_event` contains all the statsd/udp logic, uses `metrics` struct definitions to format metrics for statsd and sends traffic
+
+Where to put custom event section? How to sequence "closer look at events" vs. "metrics + reporter under the hood"? Better to see it wired all up and then closer look at events maybe? Maybe keep the hand-rolled sign-in event but get rid of the custom module and attachment call, instead move that into new telemetry module. Then show it all wired up, including looks under the hood. Then replace with OOTB metrics, link to source code, list all helpful metrics. Maybe leave out LV entirely. 
