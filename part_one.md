@@ -205,7 +205,7 @@ execute(EventName, Measurements, Metadata) when is_map(Measurements) and is_map(
 
 Let's break down this process:
 
-* First, look up the handlers for the event in ETS:
+##### First, look up the handlers for the event in ETS:
 
 ```erlang
 % telemetry/src/telemetry.erl
@@ -231,7 +231,7 @@ This will return the list of stored handlers for the event, where each handler w
 }
 ```
 
-* Then, establish an `ApplyFun` to be called for each handler. The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
+##### Then, establish an `ApplyFun` to be called for each handler. The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
 
 ```erlang
 % telemetry/src/telemetry.erl
@@ -252,7 +252,7 @@ ApplyFun =
   end
 ```
 
-* Lastly, terate over the `Handlers` and invoke the `ApplyFun` for each handler:
+##### Lastly, terate over the `Handlers` and invoke the `ApplyFun` for each handler:
 
 ```erlang
 lists:foreach(ApplyFun, Handlers).
