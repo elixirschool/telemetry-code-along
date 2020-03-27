@@ -140,14 +140,14 @@ The `attach/4` function stores the handler and its associated events in an ETS t
 If we peek at the `attach/4` source code, we can see the call to insert into ETS [here](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry.erl#L89)
 
 ```erlang
-# telemetry/src/telemetry.erl
+% telemetry/src/telemetry.erl
 telemetry_handler_table:insert(HandlerId, EventNames, Function, Config).
 ```
 
 Looking at the [`telemetry_handler_table` source code](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry_handler_table.erl#L65), we can see that the handler is stored in the ETS table like this:
 
 ```erlang
-# telemetry/src/telemetry_handler_table.erl
+% telemetry/src/telemetry_handler_table.erl
 
 Objects = [#handler{id=HandlerId,
             event_name=EventName,
@@ -174,7 +174,7 @@ Where the `HandlerId` `EventName`, `HandlerFunction` and `Config` are set to wha
 When we call `execute/3`, Telemetry will look up the handler  by the event name and invoke its callback function. Let's take a look at the source code for `execute/3` [here](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry.erl#L108):
 
 ```erlang
-# telemetry/src/telemetry.erl
+% telemetry/src/telemetry.erl
 
 -spec execute(EventName, Measurements, Metadata) -> ok when
      EventName :: event_name(),
@@ -208,7 +208,7 @@ Let's break down this process:
 * First, look up the handlers for the event in ETS:
 
 ```erlang
-# telemetry/src/telemetry.erl
+% telemetry/src/telemetry.erl
 
 Handlers = telemetry_handler_table:list_for_event(EventName)
 ```
@@ -216,7 +216,7 @@ Handlers = telemetry_handler_table:list_for_event(EventName)
 Looking at the [`telemetry_handler_table` source code](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry_handler_table.erl#L45), we can see that the handler is looked up in ETS by the given event name like this:
 
 ```erlang
-# telemetry/src/telemetry_handler_table.erl
+% telemetry/src/telemetry_handler_table.erl
 
 ets:lookup(?MODULE, EventName)
 ```
@@ -234,7 +234,7 @@ This will return the list of stored handlers for the event, where each handler w
 * Then, establish an `ApplyFun` to be called for each handler. The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/4`
 
 ```erlang
-# telemetry/src/telemetry.erl
+% telemetry/src/telemetry.erl
 
 ApplyFun =
   fun(#handler{id=HandlerId,
@@ -254,7 +254,7 @@ ApplyFun =
 
 * Lastly, terate over the `Handlers` and invoke the `ApplyFun` for each handler:
 
-```elixir
+```erlang
 lists:foreach(ApplyFun, Handlers).
 ```
 
