@@ -260,7 +260,11 @@ ApplyFun =
 lists:foreach(ApplyFun, Handlers).
 ```
 
-And that's it! To summarize, when we "attach" an event to a handler, we are storing the handler and its callback function in ETS under that event name. Later, when an event is "executed", Telemetry looks up the handler for the event and execute the callback function. Pretty simple.
+And that's it!
+
+##### Putting It All Together
+
+To summarize, when we "attach" an event to a handler, we are storing the handler and its callback function in ETS under that event name. Later, when an event is "executed", Telemetry looks up the handler for the event and execute the callback function. Pretty simple.
 
 Now that we understand how our Telemetry pipeline works, we're ready to consider the last piece of the puzzle: event reporting.
 
