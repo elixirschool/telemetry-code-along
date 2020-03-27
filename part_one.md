@@ -42,7 +42,7 @@ You can follow along with this tutorial by cloning down the repo [here](https://
 
 We'll start by picking a workflow to instrument. In order for us to truly have observability, we need _more_ that visibility into predefined metrics. Metrics are useful for creating static dashboards, monitoring trends over time and establishing alerting thresholds against those trends. Metrics are necessary for us to monitor our system, but since they are pre-aggregated and pre-defined, they _don't_ achieve true observability. For true observability, we need to be able to ask and answer _any_ question of our running system. So, we want to track and emit events with rich context. Instead of establishing a metric for a specific web request and tracking its count and duration, for example, we want to be able to emit information describing _any_ web request and include rich descriptors of the context of that request--its duration, the endpoint to which it was sent, etc.
 
-Although we want to emit an event for every web request, we'll start by picking just one endpoint to instrument. We'll emit a Telemetry event for the `/signup` action.
+Although we want to emit an event for every web request, we'll start by picking just one endpoint to instrument. We'll emit a Telemetry event for the `/register` action.
 
 ### The Telemetry Event
 
@@ -305,7 +305,7 @@ end
 
 Here, we're reporting a counter metric that tracks the number of such request events, as well as a timing metric that tracks the duration of web requests.
 
-Now, if we run our app and visit the `/signup` route a few times, we should see the following emitted to StatsD:
+Now, if we run our app and visit the `/register` route a few times, we should see the following emitted to StatsD:
 
 ```
 {
