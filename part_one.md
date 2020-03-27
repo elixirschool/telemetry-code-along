@@ -143,7 +143,7 @@ So, if we run the server with `mix phx.server`, and visit `http://localhost:4000
 [info] Received [:phoenix, :request] event. Request duration: 18000, Route: /register/new
 ```
 
-This log statement is just one example of what we could do to respond to the Telemetry event. Later on, we'll use the information in this event to report a metric to StatsD. 
+This log statement is just one example of what we could do to respond to the Telemetry event. Later on, we'll use the information in this event to report a metric to StatsD.
 
 Next up, we'll take a look under the hood of the Telemetry library to understand how emitting our event results in the invocation of our handler.
 
@@ -394,7 +394,9 @@ We won't dig into solving this problem now. Instead, we're highlighting the fact
 
 This seems hard. Is this too hard?
 
-Telemetry provides a simple interface for instrumentation, but our barebones example leaves a lot to be desired. Although we've identified a need to instrument and report on _all_ of the web requests received by our app, we've left ourselves on the hook for manually emitting Telemetry events for _every_ request, from _every endpoint_.
+Telemetry provides a simple interface for instrumentation, but our barebones example leaves a lot to be desired. Earlier, we identified a need to instrument and report on _all_ of the web requests received by our app. We want to be able to aggregate and analyze metrics describing the request times and counts across our web application, and we want the data we emit describing these data points to be information rich. In this way, our app becomes _observable_, i.e. its outputs can tell use about its state.
+
+In our current approach, however, we are manually emitting _just one Telemetry event_ for _one specific endpoint_. This approach leaves us on the hook for manually emitting Telemetry events for _every_ request, from _every endpoint_.
 
 Our reporting mechanism, currently set up to send metrics to StatsD, is also a little problematic. Not only did we have to do the work to setup our own reporter, with the help of the `Statix` library, we're not properly taking advantage of tagging or rich event event context. We'll have to do additional work to utilize our event context, either through tagging with a DogStatsD reporter (even more work to set up a whole new reporter!) or by updating the name of the event itself.
 
