@@ -213,7 +213,7 @@ Let's break down this process:
 Handlers = telemetry_handler_table:list_for_event(EventName)
 ```
 
-Looking at the [`telemetry_handler_table` source code](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry_handler_table.erl#L45), we can see that the handler is looked up in ETS by the given event name like this:
+Looking at the [`telemetry_handler_table.list_for_event/1` source code](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry_handler_table.erl#L45), we can see that the handler is looked up in ETS by the given event name like this:
 
 ```erlang
 % telemetry/src/telemetry_handler_table.erl
