@@ -26,6 +26,11 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :statix,
+  prefix: "quantum",
+  host: "127.0.0.1",
+  port: 8125
+
 # config :my_app, QuantumWeb.Endpoint,
 #    live_view: [signing_salt: "SECRET_SALT"]
 
