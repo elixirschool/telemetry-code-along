@@ -372,7 +372,9 @@ quantum.phoenix.request:21000|ms|#/register/new
 
 We won't dig into solving this problem now. Instead, we're highlighting the fact that metrics reporting is complex. It's a hard problem to solve and we could easily throw many hours and lots of code at it.
 
-### Event Emitting + Reporting Pitfalls
+### Event Emitting + Reporting Pitfalls. Or: This Seems Hard...
+
+This seems hard. Is this too hard?
 
 Telemetry provides a simple interface for instrumentation, but our barebones example leaves a lot to be desired. Although we've identified a need to instrument and report on _all_ of the web requests received by our app, we've left ourselves on the hook for manually emitting Telemetry events for _every_ request, from _every endpoint_.
 
@@ -391,60 +393,3 @@ Further, Telemetry provides a number of reporting clients, including a StatsD re
 In the next post, we'll leverage Telemetry Metrics and the Telemetry Statsd Reporter to listen for and report a number of useful VM, Phoenix and Ecto "Out Of The Box" metrics. In doing so, we'll abstract away the need for our custom `:telemetry.execute/3` calls, our custom handler _and_ our custom StatsD reporter.
 
 See you soon!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-d
