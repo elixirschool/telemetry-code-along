@@ -55,7 +55,7 @@ First, we'll install Telemetry and run `mix deps.get`:
 
 Now we're ready to emit an event!
 
-To emit a Telemetry event, we call [`:telemetry.execute`](https://hexdocs.pm/telemetry/index.html#execute). Yep, that's right, we call on the Erlang `:telemetry` module directly from our Elixir code. Elixir/Erlang inter-op FTW.
+To emit a Telemetry event, we call [`:telemetry.execute/3`](https://hexdocs.pm/telemetry/index.html#execute). Yep, that's right, we call on the Erlang `:telemetry` module directly from our Elixir code. Elixir/Erlang inter-op FTW.
 
 The `execute/3` function takes in three arguments--the name of the event, the measurements we're using to describe that event and any metadata that describes the event context.
 
@@ -231,7 +231,7 @@ This will return the list of stored handlers for the event, where each handler w
 }
 ```
 
-* Then, establish an `ApplyFun` to be called for each handler. The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/4`
+* Then, establish an `ApplyFun` to be called for each handler. The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
 
 ```erlang
 % telemetry/src/telemetry.erl
