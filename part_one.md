@@ -167,7 +167,7 @@ So, each handler is stored in ETS with the format:
 }
 ```
 
-Where the `HandlerId` `EventName`, `HandlerFunction` and `Config` are set to whatever we passed into our call to `:telemetry/attach/4`.
+Where the `HandlerId` `EventName`, `HandlerFunction` and `Config` are set to whatever we passed into our call to `:telemetry.attach/4`.
 
 #### Executing Events
 
