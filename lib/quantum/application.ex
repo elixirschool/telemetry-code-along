@@ -6,20 +6,12 @@ defmodule Quantum.Application do
   use Application
 
   def start(_type, _args) do
-    :ok = :telemetry.attach(
-      # unique handler id
-      "quantum-telemetry-metrics",
-      [:browser, :request, :stop],
-      &Quantum.Telemetry.Metrics.handle_event/4,
-      nil
-    )
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
       Quantum.Repo,
       # Start the endpoint when the application starts
-      QuantumWeb.Endpoint,
-      QuantumWeb.Telemetry
+      QuantumWeb.Endpoint
       # Starts a worker by calling: Quantum.Worker.start_link(arg)
       # {Quantum.Worker, arg},
     ]

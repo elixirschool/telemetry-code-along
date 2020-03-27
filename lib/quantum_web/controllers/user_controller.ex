@@ -10,7 +10,6 @@ defmodule QuantumWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    IO.puts "CREATING ACCOUNT"
     case Accounts.create_user(user_params) do
       {:ok, user} ->
         conn

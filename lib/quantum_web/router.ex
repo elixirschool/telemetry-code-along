@@ -8,7 +8,6 @@ defmodule QuantumWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug QuantumWeb.Plugs.CurrentUser
-    plug Plug.Telemetry, event_prefix: [:browser, :request]
   end
 
   pipeline :api do

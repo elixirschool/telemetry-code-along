@@ -15,13 +15,9 @@ defmodule QuantumWeb.ButtonLive do
   end
 
   def handle_event("button_click", %{"button" => btn}, socket) do
-    start = System.monotonic_time()
-
     socket =
       socket
       |> assign(:selected_button, btn)
-
-    :telemetry.execute([:live, :handle_event, :button_click], %{duration: System.monotonic_time() - start}, socket)
 
     {:noreply, socket}
   end
