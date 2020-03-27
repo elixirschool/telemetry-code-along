@@ -231,7 +231,9 @@ This will return the list of stored handlers for the event, where each handler w
 }
 ```
 
-##### Then, establish an `ApplyFun` to be called for each handler. The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
+##### Then, establish an `ApplyFun` to be called for each handler
+
+The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
 
 ```erlang
 % telemetry/src/telemetry.erl
@@ -252,7 +254,7 @@ ApplyFun =
   end
 ```
 
-##### Lastly, terate over the `Handlers` and invoke the `ApplyFun` for each handler:
+##### Lastly, iterate over the `Handlers` and invoke the `ApplyFun` for each handler
 
 ```erlang
 lists:foreach(ApplyFun, Handlers).
