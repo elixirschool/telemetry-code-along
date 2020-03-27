@@ -98,7 +98,7 @@ defmodule Quantum.Telemetry.Metrics do
 
   def handle_event([:phoenix, :request], %{duration: dur}, metadata, _config) do
     # do some stuff like log a message or report metrics to a service like StatsD
-    Logger.info("Received [:phoenix, :request] event. Request duration: #{dur}")
+    Logger.info("Received [:phoenix, :request] event. Request duration: #{dur}, Route: #{metadata.request_path}")
   end
 end
 ```
@@ -137,11 +137,19 @@ Now that we've defined and emitted our event, and attached a handler to that eve
 * We'll emit the Telemetry event, including the request duration and the `conn`:`:telemetry.execute([:phoenix, :request], %{duration: System.monotonic_time() - start}, conn)`
 * Then our `Quantum.Telemetry.Metrics.handle_event/4` function will be invoked, with the arguments of the event name, the measurement map including the request duration, and measurement metadata, for which we passed in the `conn`.
 
+So, if we run the server with `mix phx.server`, and visit `http://localhost:4000/register/new`, we should see the following logged to our terminal:
+
+```
+[info] Received [:phoenix, :request] event. Request duration: 18000, Route: /register/new
+```
+
+This log statement is just one example of what we could do to respond to the Telemetry event. Later on, we'll use the information in this event to report a metric to StatsD. 
+
 Next up, we'll take a look under the hood of the Telemetry library to understand how emitting our event results in the invocation of our handler.
 
 ### Telemetry Under The Hood
 
-How does Telemetry invoke our handler callback function when an event is emitted? It leverages ETS! Telemetry stores our event and associated handler module and callback function in an ETS table when we call `attach/4`. When we call `execute/3`, Telemetry looks up the handler for the given even in the ETS table and executes the handler's callback function. 
+How does Telemetry invoke our handler callback function when an event is emitted? It leverages ETS! Telemetry stores our event and associated handler module and callback function in an ETS table when we call `attach/4`. When we call `execute/3`, Telemetry looks up the handler for the given even in the ETS table and executes the handler's callback function.
 
 #### Attaching Handlers to Events
 
