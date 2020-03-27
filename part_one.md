@@ -81,7 +81,7 @@ defmodule QuantumWeb.UserController do
 end
 ```
 
-Here, we're emitting an event that includes the duration measurement, tracking the duration of the web request, along with the context of the web request, described by the `conn` struct.
+Here, we're emitting an event that includes the duration measurement--tracking the duration of the web request--along with the context of the web request, described by the `conn` struct.
 
 
 ### Defining and Attaching The Telemetry Handler
@@ -97,7 +97,8 @@ defmodule Quantum.Telemetry.Metrics do
   alias Quantum.Telemetry.StatsdReporter
 
   def handle_event([:phoenix, :request], %{duration: dur}, metadata, _config) do
-    # do some stuff!
+    # do some stuff like log a message or report metrics to a service like StatsD
+    Logger.info("Received [:phoenix, :request] event. Request duration: #{dur}")
   end
 end
 ```
@@ -129,7 +130,14 @@ def start(_, _) do
   ...
 end
 ```
-Now that we've defined and emitted our event, and attached a handler to that event, let's take a look under the hood of the Telemetry library to understand how emitting our event results in the invocation of our handler.
+
+Now that we've defined and emitted our event, and attached a handler to that event, the following will occur:
+
+* When a user visit the `/register` route and hits the `new` action of the `UserController`
+* We'll emit the Telemetry event, including the request duration and the `conn`:`:telemetry.execute([:phoenix, :request], %{duration: System.monotonic_time() - start}, conn)`
+* Then our `Quantum.Telemetry.Metrics.handle_event/4` function will be invoked, with the arguments of the event name, the measurement map including the request duration, and measurement metadata, for which we passed in the `conn`.
+
+Next up, we'll take a look under the hood of the Telemetry library to understand how emitting our event results in the invocation of our handler.
 
 ### Telemetry Under The Hood
 
