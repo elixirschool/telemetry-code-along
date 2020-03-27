@@ -141,6 +141,8 @@ Next up, we'll take a look under the hood of the Telemetry library to understand
 
 ### Telemetry Under The Hood
 
+How does Telemetry invoke our handler callback function when an event is emitted? It leverages ETS! Telemetry stores our event and associated handler module and callback function in an ETS table when we call `attach/4`. When we call `execute/3`, Telemetry looks up the handler for the given even in the ETS table and executes the handler's callback function. 
+
 #### Attaching Handlers to Events
 
 The `attach/4` function stores the handler and its associated events in an ETS table, under the unique handler ID we provide.
