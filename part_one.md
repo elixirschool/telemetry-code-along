@@ -1,8 +1,17 @@
-# Instrumenting Phoenix with Telemetry + StatsD Part 1: Telemetry Under The Hood
+# Instrumenting Phoenix with Telemetry Part 1: Telemetry Under The Hood
 
-In this series, we'll be instrumenting a Phoenix app and sending metrics to StatsD with the help of Elixir and Erlang's Telemetry offerings
+In this series, we'll be instrumenting a Phoenix app and sending metrics to StatsD with the help of Elixir and Erlang's Telemetry offerings. A breif overview of what we'll cover:
 
-First, we'll discuss why observability matters and how Telemetry helps us treat observability like a first class citizen in Elixir projects. Then, we'll hand-roll our own instrumentation pipeline using Telemetry and StatsD. We'll wrap up with a look under the hood of the Telemetry library and set ourselves for Part 2 of this series, in which we leverage the Telemetry.Metrics library for even easier instrumentation and reporting.
+* Part I: Telemetry Under The Hood
+* Part II: Handling Telemetry Events with `TelemetryMetrics` + `TelemetryMetricsStatsd`
+* Part III: Observing Phoenix + Ecto Telemetry Events
+* Part IV: Erlang VM Measurements with `telemetry_poller`, `TelemetryMetrics` + `TelemetryMetricsStatsd`
+
+In Part I start out by setting up a basic, DIY Telemetry pipeline and examining how Erlang's Telemetry library works under the hood. Then, in Part II we'll take advantage of the `TelemetryMetrics` + `TelemetryMetricsStatsd` libraries to handle Telemetry event metric formatting and reporting for us. In Part III, we'll look at the powerful instrumentation that Phoenix and Ecto offers out-of-the-box via Telemetry events executed in source code. Lastly, in Part IV, we'll leverage the the `telemetry_poller` Erlang library to take Erlang VM measurements and emit them as Telemetry events, which our Telemetry pipeline can then observe and report on.
+
+## Introduction
+
+In this post we'll discuss why observability matters and how Telemetry helps us treat observability like a first class citizen in Elixir projects. Then, we'll hand-roll our own instrumentation pipeline using Telemetry and StatsD. We'll wrap up with a look under the hood of the Telemetry library and set ourselves for Part 2 of this series, in which we leverage the `Telemetry.Metrics` library for even easier instrumentation and reporting.
 
 ## Observability Matters
 
