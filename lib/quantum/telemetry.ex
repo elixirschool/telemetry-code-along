@@ -8,13 +8,8 @@ defmodule Quantum.Telemetry do
 
   def init(_arg) do
     children = [
-      # {:telemetry_poller,
-      #  measurements: periodic_measurements(),
-      #  period: 10_000},
-      # Or TelemetryMetricsPrometheus or TelemetryMetricsFooBar
-      # {TelemetryMetricsStatsd, metrics: metrics(), formatter: :datadog} # for datadog, add prefix: "quantum", global_tags: [env: Mix.env()] but global tags prob. best handled by DD agent conf
-      {TelemetryMetricsStatsd, metrics: metrics()}
-      # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
+      {TelemetryMetricsStatsd, metrics: metrics(), formatter: :datadog} # for datadog, add prefix: "quantum", global_tags: [env: Mix.env()] but global tags prob. best handled by DD agent conf
+      # {TelemetryMetricsStatsd, metrics: metrics()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -28,22 +23,22 @@ defmodule Quantum.Telemetry do
       last_value("vm.total_run_queue_lengths.cpu"),
       last_value("vm.total_run_queue_lengths.io"),
 
-      # Custom Polled Metrics
-      # last_value("quantum.worker.memory", unit: :byte),
-      # last_value("quantum.worker.message_queue_len"),
-
       # Database Time Metrics - timing
-      summary("quantum.repo.query.total_time", unit: {:native, :millisecond}, tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
-      summary("quantum.repo.query.decode_time", unit: {:native, :millisecond}),
-      summary("quantum.repo.query.query_time", unit: {:native, :millisecond}),
-      summary("quantum.repo.query.queue_time", unit: {:native, :millisecond}),
+      summary(
+        "quantum.repo.query.total_time",
+        unit: {:native, :millisecond},
+        tag_values: &__MODULE__.query_metatdata/1,
+        tags: [:source, :command]
+      ),
 
       # Database Count Metrics - count
-      counter("quantum.repo.query.count", tag_values: &__MODULE__.query_metatdata/1, tags: [:source, :command]),
+      counter(
+        "quantum.repo.query.count",
+        tag_values: &__MODULE__.query_metatdata/1,
+        tags: [:source, :command]
+      ),
 
       # Phoenix Time Metrics - timing
-      # summary("phoenix.endpoint.stop.duration",
-              # unit: {:native, :millisecond}, tag_values: &__MODULE__.endpoint_metadata/1),
       summary(
         "phoenix.router_dispatch.stop.duration",
         unit: {:native, :millisecond},
@@ -57,10 +52,8 @@ defmodule Quantum.Telemetry do
         tags: [:plug, :plug_opts, :status] # for datadog, add :route and view metric over route
       ),
 
-      # :telemetry.execute([:phoenix, :error_rendered], %{duration: duration}, metadata)
-      # make sure you set debug error to false in dev.exs b/c otherwise you see helpful routes pager, this way it renders your error view
       counter(
-        "phoenix.error_rendered.duration",
+        "phoenix.error_rendered.count",
         tag_values: &__MODULE__.error_request_metadata/1,
         tags: [:status, :request_path]
       ),
@@ -92,14 +85,4 @@ defmodule Quantum.Telemetry do
   def live_view_metadata(%{assigns: %{selected_button: button}}) do
     %{button: button}
   end
-
-  # custom polling for worker metrics
-  # defp periodic_measurements do
-  #   [
-  #     {:process_info,
-  #      event: [:my_app, :worker],
-  #      name: Rumbl.Worker,
-  #      keys: [:message_queue_len, :memory]}
-  #   ]
-  # end
 end
