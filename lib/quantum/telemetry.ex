@@ -1,4 +1,4 @@
-defmodule QuantumWeb.Telemetry do
+defmodule Quantum.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 

@@ -1,7 +1,6 @@
 defmodule QuantumWeb.Router do
   use QuantumWeb, :router
   pipeline :browser do
-    # plug :put_root_layout, {QuantumWeb.LayoutView, :app}
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash

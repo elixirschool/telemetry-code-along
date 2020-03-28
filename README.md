@@ -202,4 +202,7 @@ end
       * Telemetry calls execute, which looks up handler and invokes `handle_event`
       * Reporter's `handle_event` contains all the statsd/udp logic, uses `metrics` struct definitions to format metrics for statsd and sends traffic
 
-Where to put custom event section? How to sequence "closer look at events" vs. "metrics + reporter under the hood"? Better to see it wired all up and then closer look at events maybe? Maybe keep the hand-rolled sign-in event but get rid of the custom module and attachment call, instead move that into new telemetry module. Then show it all wired up, including looks under the hood. Then replace with OOTB metrics, link to source code, list all helpful metrics. Maybe leave out LV entirely. 
+Where to put custom event section? How to sequence "closer look at events" vs. "metrics + reporter under the hood"? Better to see it wired all up and then closer look at events maybe? Maybe keep the hand-rolled sign-in event but get rid of the custom module and attachment call, instead move that into new telemetry module. Then show it all wired up, including looks under the hood. Then replace with OOTB metrics, link to source code, list all helpful metrics. Maybe leave out LV entirely.
+
+## Blog post revision Notes*
+* post 1: explain about multiple handlers for a given event so you can operate on it in multiple ways
