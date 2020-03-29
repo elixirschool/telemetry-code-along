@@ -20,6 +20,7 @@ defmodule Quantum.Telemetry do
       last_value("vm.memory.total", unit: :byte),
       last_value("vm.total_run_queue_lengths.total"),
       last_value("vm.total_run_queue_lengths.cpu"),
+      last_value("vm.system_counts.process_count"),
 
       # Database Time Metrics - Formats `timing` StatsD metric type
       summary(
