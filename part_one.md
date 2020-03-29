@@ -1,31 +1,31 @@
 # Instrumenting Phoenix with Telemetry Part 1: Telemetry Under The Hood
 
-In this series, we'll be instrumenting a Phoenix app and sending metrics to StatsD with the help of Elixir and Erlang's Telemetry offerings. A breif overview of what we'll cover:
+In this series, we'll be instrumenting a Phoenix app and sending metrics to StatsD with the help of Elixir and Erlang's Telemetry offerings. A brief overview of what we'll cover:
 
 * Part I: Telemetry Under The Hood
 * Part II: Handling Telemetry Events with `TelemetryMetrics` + `TelemetryMetricsStatsd`
 * Part III: Observing Phoenix + Ecto Telemetry Events
 * Part IV: Erlang VM Measurements with `telemetry_poller`, `TelemetryMetrics` + `TelemetryMetricsStatsd`
 
-In Part I start out by setting up a basic, DIY Telemetry pipeline and examining how Erlang's Telemetry library works under the hood. Then, in Part II we'll take advantage of the `TelemetryMetrics` + `TelemetryMetricsStatsd` libraries to handle Telemetry event metric formatting and reporting for us. In Part III, we'll look at the powerful instrumentation that Phoenix and Ecto offers out-of-the-box via Telemetry events executed in source code. Lastly, in Part IV, we'll leverage the the `telemetry_poller` Erlang library to take Erlang VM measurements and emit them as Telemetry events, which our Telemetry pipeline can then observe and report on.
+In Part I we'll start out by setting up a basic, DIY Telemetry pipeline and examining how Erlang's Telemetry library works under the hood. Then, in Part II we'll take advantage of the `TelemetryMetrics` and `TelemetryMetricsStatsd` libraries to respond to Telemetry events by formatting them as metrics and reporting those metrics to StatsD. In Part III, we'll look at the powerful instrumentation that Phoenix and Ecto offer out-of-the-box via Telemetry events executed in source code. Lastly, in Part IV, we'll leverage the `telemetry_poller` Erlang library to take Erlang VM measurements and emit them as Telemetry events, which our Telemetry pipeline can then observe and report on.
 
 ## Introduction
 
-In this post we'll discuss why observability matters and how Telemetry helps us treat observability like a first class citizen in Elixir projects. Then, we'll hand-roll our own instrumentation pipeline using Telemetry and StatsD. We'll wrap up with a look under the hood of the Telemetry library and set ourselves for Part 2 of this series, in which we leverage the `Telemetry.Metrics` library for even easier instrumentation and reporting.
+In this post we'll discuss why observability matters and how Telemetry helps us treat observability like a first class citizen in Elixir projects. Then, we'll hand-roll our own instrumentation pipeline using Telemetry and StatsD. We'll wrap up with a look under the hood of the Telemetry library and set ourselves for Part II of this series, in which we leverage the `Telemetry.Metrics` library for even easier instrumentation and reporting.
 
 ## Observability Matters
 
-In the immortal words of [Charity Majors](https://charity.wtf/), observability means:
+In the immortal words of [Charity Majors](https://charity.wtf/), observability means asking ourselves:
 
 > can you understand what is happening inside the system — can you understand ANY internal state the system may get itself into, simply by asking questions from the outside?
 
-Anyone who has spent hours (days?) debugging a production issue that they can't replicate locally, relying mostly on guesswork and institutional knowledge knows what it costs to lack this ability. The hours we spend each week debugging, hampered by poor visibility into the state of complex production systems, are hours we're _not_ spending adding value to our business, shipping shiny new code that solves interesting problems for our users, or playing with our adorable dogs (okay that last one might be just me?).
+Anyone who has spent hours (days?) debugging a production issue that they can't replicate locally, relying mostly on guesswork and institutional knowledge knows what it costs to lack this ability. The hours we spend each week debugging, hampered by poor visibility into the state of complex production systems, are hours we're _not_ spending adding value to our business, shipping shiny new code that solves interesting problems for our users, or playing with our adorable dogs (okay that last one might be just me).
 
-Why is this? Many of us have come to treat this like the natural state of things, have come to accept this frustration as part of the job of being a software engineer. We treat observability like something this is out of our hands, or an afterthought--a "nice to have" after the main target of building that new feature or shipping the MVP are hit.
+Many of us have come to treat this situation as perfectly natural--we've come to accept this frustration as part of the job of being a software engineer. We treat observability like something that is out of our hands, or an afterthought--a "nice to have" after the main target of building that new feature or shipping the MVP are hit.
 
 The traditional split between "web developers" and "dev-ops engineers" has lulled us into believing that observability is not the responsibility of the web dev. In the past, it may have been the case that ensuring system observability required a specialized set of skills.
 
-This is increasingly not true of the world we live in. With third-party tools like Datadog, Splunk and Honeycomb, and libraries like Telemetry, web developers are empowered to treat observability like the first class citizen it is. To paraphrase Charity Majors (again), we can instrument our code, watch it deploy, and ask and answer the question: "is it doing what I expect?". In this way, we can build systems that are "both understandable and well understood".
+This is increasingly not true of the world we live in. With third-party tools like Datadog, Splunk and Honeycomb, and libraries like Telemetry, web developers are empowered to treat observability like the first class citizen it is. To paraphrase Charity Majors (again), in today's world we can instrument our code, watch it deploy, and answer the question: "is it doing what I expect?". In this way, we can build systems that are "both understandable and well understood".
 
 ## Telemetry Gives Us Visibility
 
@@ -35,7 +35,7 @@ This is increasingly not true of the world we live in. With third-party tools li
 
 Telemetry is already included in both Ecto and Phoenix, emitting events that we can opt-in to receiving and acting on accordingly. We can also emit our own custom Telemetry events from our application code and define handlers to respond to them.
 
-The Telemetry events emitted for free from Ecto and Phoenix mean standardized instrumentation for _all_ apps using these libraries. At the same time, the interface that Telemetry provides for handling such events and emitting additional custom events empowers every Elixir developer to foreground observability by writing and shipping fully instrumented code with ease.
+The Telemetry events emitted for free from Ecto and Phoenix mean standardized instrumentation for _all_ apps using these libraries. At the same time, the interface that Telemetry provides for handling such events and emitting additional custom events empowers every Elixir developer to hit observability goals by writing and shipping fully instrumented code with ease.
 
 Now that we understand why observability matters and how Telemetry supports observability, let's dive into the Telemetry library!
 
@@ -47,13 +47,32 @@ First, we'll take a look at how to set up a simple reporting pipeline for custom
 
 You can follow along with this tutorial by cloning down the repo [here](https://github.com/SophieDeBenedetto/quantum/tree/part-1-start). Our Phoenix app, Quantum (get it?), is pretty simple--users can sign up, log in and click some buttons. Awesome, right? Really this dummy app just exists to be instrumented so it doesn't do much, sorry.
 
+### Overview
+
+To get our pipeline up and running we will:
+
+* Install the Telemetry library
+* Execute a Telemetry event
+* Define an event handler module and callback function
+* Attach the event to the handler
+
+Let's get started!
+
 ### What We're Instrumenting
 
-We'll start by picking a workflow to instrument. In order for us to truly have observability, we need _more_ that visibility into predefined metrics. Metrics are useful for creating static dashboards, monitoring trends over time and establishing alerting thresholds against those trends. Metrics are necessary for us to monitor our system, but since they are pre-aggregated and pre-defined, they _don't_ achieve true observability. For true observability, we need to be able to ask and answer _any_ question of our running system. So, we want to track and emit events with rich context. Instead of establishing a metric for a specific web request and tracking its count and duration, for example, we want to be able to emit information describing _any_ web request and include rich descriptors of the context of that request--its duration, the endpoint to which it was sent, etc.
+We'll start by picking a workflow to instrument. But first...
 
-Although we want to emit an event for every web request, we'll start by picking just one endpoint to instrument. We'll emit a Telemetry event for the `/register` action.
+#### A Note on Metrics
 
-### The Telemetry Event
+In order for us to truly have observability, we need _more_ than visibility into predefined metrics. Metrics are useful for creating static dashboards, monitoring trends over time and establishing alerting thresholds against those trends. Metrics are necessary for us to monitor our system, but since they are pre-aggregated and pre-defined, they _don't_ achieve true observability. For true observability, we need to be able to ask and answer _any_ question of our running system. So, we want to track and emit events with rich context. Instead of establishing a metric for a specific web request and tracking its count and duration, for example, we want to be able to emit information describing _any_ web request and include rich descriptors of the context of that request--its duration, the endpoint to which it was sent, etc.
+
+Although we want to emit an event for every web request, we'll start by picking just one endpoint to instrument.
+
+#### Our Custom Telemetry Event
+
+Let's emit a Telemetry event every time a user hits the `/register` route and visits the sign up page.
+
+### Step 1: Installing Telemetry
 
 First, we'll install Telemetry and run `mix deps.get`:
 
@@ -64,11 +83,13 @@ First, we'll install Telemetry and run `mix deps.get`:
 
 Now we're ready to emit an event!
 
+### Step 2: Executing a Telemetry Event
+
 To emit a Telemetry event, we call [`:telemetry.execute/3`](https://hexdocs.pm/telemetry/index.html#execute). Yep, that's right, we call on the Erlang `:telemetry` module directly from our Elixir code. Elixir/Erlang inter-op FTW!
 
 The `execute/3` function takes in three arguments--the name of the event, the measurements we're using to describe that event and any metadata that describes the event context.
 
-We'll emit the following event from the `new` function of our `UserController`.
+We'll emit the following event, with the name `[:phoenix, :request]`, from the `new` function of our `UserController`.
 
 Our event:
 
@@ -93,11 +114,13 @@ end
 Here, we're emitting an event that includes the duration measurement--tracking the duration of the web request--along with the context of the web request, described by the `conn` struct.
 
 
-### Defining and Attaching The Telemetry Handler
+### Step 3: Defining and Attaching The Telemetry Handler
 
-We need to define a handler that implements a `handle_event/4` callback. Our `handle_event/4` function will match the specific event we're emitting using [function arity pattern matching](https://medium.com/flatiron-labs/how-functions-pattern-match-in-elixir-12a44a51c6ad).
+We need to define a handler that implements a callback function that will be invoked when our event is executed.
 
-Let's define a module, `Quantum.Telemetry.Metrics`, that implements this function:
+The callback function will match the specific event we're emitting using [function arity pattern matching](https://medium.com/flatiron-labs/how-functions-pattern-match-in-elixir-12a44a51c6ad).
+
+Let's define a module, `Quantum.Telemetry.Metrics`, that implements a function, `handle_event/4`:
 
 ```elixir
 # lib/quantum/telemetry/metrics.ex
@@ -112,7 +135,9 @@ defmodule Quantum.Telemetry.Metrics do
 end
 ```
 
-In order for this module's `handle_event/4` function to be called when our `[:phoenix, :request]` event is emitted, we need to "attach" the handler to the event.
+### Step 4: Attaching the Event to the Handler
+
+In order for this module's `handle_event/4` function to be called when our `[:phoenix, :request]` event is executed, we need to "attach" the handler to the event.
 
 We do that with the help of Telemetry's [`attach/4`](https://hexdocs.pm/telemetry/index.html#attach) function.
 
@@ -120,7 +145,7 @@ The `attach/4` function takes in four arguments:
 
 * A unique "handler ID" that will be used to look up the handler for the event later
 * The event name
-* The handler module and callback function
+* The handler callback function
 * Any handler config (which we don't need to take advantage of for the purposes of our example)
 
 We'll call this function in our application's `start/2` function:
@@ -130,11 +155,11 @@ We'll call this function in our application's `start/2` function:
 
 def start(_, _) do
   :ok = :telemetry.attach(
-  # unique handler id
-  "quantum-telemetry-metrics",
-  [:phoenix, :request],
-  &Quantum.Telemetry.Metrics.handle_event/4,
-  nil
+    # unique handler id
+    "quantum-telemetry-metrics",
+    [:phoenix, :request],
+    &Quantum.Telemetry.Metrics.handle_event/4,
+    nil
   )
   ...
 end
@@ -143,8 +168,8 @@ end
 Now that we've defined and emitted our event, and attached a handler to that event, the following will occur:
 
 * When a user visit the `/register` route and hits the `new` action of the `UserController`
-* We'll emit the Telemetry event, including the request duration and the `conn`:`:telemetry.execute([:phoenix, :request], %{duration: System.monotonic_time() - start}, conn)`
-* Then our `Quantum.Telemetry.Metrics.handle_event/4` function will be invoked, with the arguments of the event name, the measurement map including the request duration, and measurement metadata, for which we passed in the `conn`.
+* We'll emit the Telemetry event, including the request duration and the `conn` like this:`:telemetry.execute([:phoenix, :request], %{duration: System.monotonic_time() - start}, conn)`
+* Then our `Quantum.Telemetry.Metrics.handle_event/4` function will be invoked, with the arguments of the event name, the measurement map including the request duration, and the measurement metadata, for which we passed in the `conn`.
 
 So, if we run the server with `mix phx.server`, and visit `http://localhost:4000/register/new`, we should see the following logged to our terminal:
 
@@ -156,11 +181,11 @@ This log statement is just one example of what we could do to respond to the Tel
 
 Next up, we'll take a look under the hood of the Telemetry library to understand how emitting our event results in the invocation of our handler.
 
-### Telemetry Under The Hood
+## Telemetry Under The Hood
 
 How does Telemetry invoke our handler callback function when an event is emitted? It leverages ETS! Telemetry stores our event and associated handler module and callback function in an ETS table when we call `attach/4`. When we call `execute/3`, Telemetry looks up the handler for the given even in the ETS table and executes the handler's callback function.
 
-#### Attaching Handlers to Events
+### Attaching Handlers to Events
 
 The `attach/4` function stores the handler and its associated events in an ETS table, under the unique handler ID we provide.
 
@@ -196,7 +221,7 @@ So, each handler is stored in ETS with the format:
 
 Where the `HandlerId` `EventName`, `HandlerFunction` and `Config` are set to whatever we passed into our call to `:telemetry.attach/4`.
 
-#### Executing Events
+### Executing Events
 
 When we call `execute/3`, Telemetry will look up the handler  by the event name and invoke its callback function. Let's take a look at the source code for `execute/3` [here](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry.erl#L108):
 
@@ -232,7 +257,7 @@ execute(EventName, Measurements, Metadata) when is_map(Measurements) and is_map(
 
 Let's break down this process:
 
-##### First, look up the handlers for the event in ETS:
+#### First, look up the handlers for the event in ETS:
 
 ```erlang
 % telemetry/src/telemetry.erl
@@ -258,7 +283,7 @@ This will return the list of stored handlers for the event, where each handler w
 }
 ```
 
-##### Then, establish an `ApplyFun` to be called for each handler
+#### Then, establish an `ApplyFun` to be called for each handler
 
 The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
 
@@ -281,7 +306,7 @@ ApplyFun =
   end
 ```
 
-##### Lastly, iterate over the `Handlers` and invoke the `ApplyFun` for each handler
+#### Lastly, iterate over the `Handlers` and invoke the `ApplyFun` for each handler
 
 ```erlang
 lists:foreach(ApplyFun, Handlers).
@@ -289,7 +314,7 @@ lists:foreach(ApplyFun, Handlers).
 
 And that's it!
 
-##### Putting It All Together
+#### Putting It All Together
 
 To summarize, when we "attach" an event to a handler, we are storing the handler and its callback function in ETS under that event name. Later, when an event is "executed", Telemetry looks up the handler for the event and executes the callback function. Pretty simple.
 
