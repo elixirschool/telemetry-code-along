@@ -7,7 +7,7 @@ defmodule QuantumWeb.UserController do
   def new(conn, _params) do
     start = System.monotonic_time()
     changeset = Accounts.change_user(%User{})
-    :telemetry.execute([:phoenix, :request, :success], %{duration: System.monotonic_time() - start}, conn)
+    :telemetry.execute([:phoenix, :request], %{duration: System.monotonic_time() - start}, conn)
     render(conn, "new.html", changeset: changeset)
   end
 
@@ -15,14 +15,12 @@ defmodule QuantumWeb.UserController do
     start = System.monotonic_time()
     case Accounts.create_user(user_params) do
       {:ok, user} ->
-        :telemetry.execute([:phoenix, :request, :success], %{duration: System.monotonic_time() - start}, conn)
         conn
         |> put_session(:current_user_id, user.id)
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: Routes.user_path(conn, :show, user))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        :telemetry.execute([:phoenix, :request, :failure], %{duration: System.monotonic_time() - start}, conn)
         render(conn, "new.html", changeset: changeset)
     end
   end
