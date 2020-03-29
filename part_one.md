@@ -183,16 +183,18 @@ Next up, we'll take a look under the hood of the Telemetry library to understand
 
 ## Telemetry Under The Hood
 
-How does Telemetry invoke our handler callback function when an event is emitted? It leverages ETS! Telemetry stores our event and associated handler module and callback function in an ETS table when we call `attach/4`. When we call `execute/3`, Telemetry looks up the handler for the given even in the ETS table and executes the handler's callback function.
+How does Telemetry invoke our handler callback function when an event is emitted? It leverages ETS! Telemetry stores our event and associated handler in an ETS table when we call `:telemetry.attach/4`. When we call `:telemetry.execute/3`, Telemetry looks up the handler function for the given event in the ETS table and executes it.
 
 ### Attaching Handlers to Events
 
-The `attach/4` function stores the handler and its associated events in an ETS table, under the unique handler ID we provide.
+The `:telemetry.attach/4` function stores the handler and its associated events in an ETS table, under the unique handler ID we provide.
 
 If we peek at the `attach/4` source code, we can see the call to insert into ETS [here](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry.erl#L89)
 
 ```erlang
 % telemetry/src/telemetry.erl
+% inside the attach/4 function:
+
 telemetry_handler_table:insert(HandlerId, EventNames, Function, Config).
 ```
 
@@ -200,6 +202,7 @@ Looking at the [`telemetry_handler_table` source code](https://github.com/beam-t
 
 ```erlang
 % telemetry/src/telemetry_handler_table.erl
+% inside the insert/5 function:
 
 Objects = [#handler{id=HandlerId,
             event_name=EventName,
@@ -223,7 +226,7 @@ Where the `HandlerId` `EventName`, `HandlerFunction` and `Config` are set to wha
 
 ### Executing Events
 
-When we call `execute/3`, Telemetry will look up the handler  by the event name and invoke its callback function. Let's take a look at the source code for `execute/3` [here](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry.erl#L108):
+When we call `:telemetry.execute/3`, Telemetry will look up the handler by the event name and invoke its callback function. Let's take a look at the source code for `:telemetry.execute/3` [here](https://github.com/beam-telemetry/telemetry/blob/master/src/telemetry.erl#L108):
 
 ```erlang
 % telemetry/src/telemetry.erl
@@ -269,6 +272,7 @@ Looking at the [`telemetry_handler_table.list_for_event/1` source code](https://
 
 ```erlang
 % telemetry/src/telemetry_handler_table.erl
+% inside list_for_event/1
 
 ets:lookup(?MODULE, EventName)
 ```
@@ -285,7 +289,7 @@ This will return the list of stored handlers for the event, where each handler w
 
 #### Then, establish an `ApplyFun` to be called for each handler
 
-The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements, metadata and config passed in via the call to `:telemetry.execute/3`
+The `ApplyFun` will invoke the given handler's `HandleFunction` with the event, measurements and metadata passed in via the call to `:telemetry.execute/3`, along with any config that was stored in ETS.
 
 ```erlang
 % telemetry/src/telemetry.erl
@@ -322,7 +326,7 @@ Now that we understand how our Telemetry pipeline works, we're ready to consider
 
 ### Reporting Events to StatsD
 
-What you do with your event is up to you, but one common strategy is to report metrics to StatsD. In this example, we'll use the [`Statix`](https://github.com/lexmag/statix) to report metrics describing our event to StatsD.
+What you do with your event is up to you, but one common strategy is to report metrics to StatsD. In this example, we'll use the [`Statix`](https://github.com/lexmag/statix) library to report metrics describing our event to StatsD.
 
 First, we'll install Statix and run `mix deps.get`
 
@@ -398,12 +402,12 @@ Now, if we run our app and visit the `/register` route a few times, we should se
 
 *NOTE: To install and run StatsD locally follow the simple guide [here](https://anomaly.io/statsd-install-and-config/index.html).*
 
-This reporting leaves something to be desired. We're not currently taking advantage of the request context, passed into the `handle_event/4` function as the `metadata` argument. This metric alone is not very helpful from an observability standpoint.
+This reporting leaves something to be desired. We're not currently taking advantage of the request context, passed into the `handle_event/4` function as the `metadata` argument. This metric alone is not very helpful from an observability standpoint since it doesn't tell us anything about which endpoint received the request, who sent it and what the response was.
 
-We have two options here. We can either emit a more specific event from our controller, something like:
+We have two options here. We can emit a more specific event from our controller, something like:
 
 ```elixir
-:telemetry.execute([:phoenix, :request, :signup], %{duration: System.monotonic_time() - start}, conn)
+:telemetry.execute([:phoenix, :request, :register], %{duration: System.monotonic_time() - start}, conn)
 ```
 
 This leaves us on the hook for defining and emitting custom events _from every controller action_. Soon it will be hard to keep track of and standardize all of these events.
@@ -428,11 +432,11 @@ We won't dig into solving this problem now. Instead, we're highlighting the fact
 
 This seems hard. Is this too hard?
 
-Telemetry provides a simple interface for instrumentation, but our barebones example leaves a lot to be desired. Earlier, we identified a need to instrument and report on _all_ of the web requests received by our app. We want to be able to aggregate and analyze metrics describing the request times and counts across our web application, and we want the data we emit describing these data points to be information rich. In this way, our app becomes _observable_, i.e. its outputs can tell use about its state.
+Telemetry provides a simple interface for instrumentation, but our barebones example leaves a lot to be desired. Earlier, we identified a need to instrument and report on _all_ of the web requests received by our app. We want to be able to aggregate and analyze metrics describing the request times and counts across our web application, and we want the data we emit describing these data points to be information rich so that we can slice it by endpoint, response status and more. In this way, our app becomes _observable_, i.e. its outputs can tell use about its state.
 
 In our current approach, however, we are manually emitting _just one Telemetry event_ for _one specific endpoint_. This approach leaves us on the hook for manually emitting Telemetry events for _every_ request, from _every endpoint_.
 
-Our reporting mechanism, currently set up to send metrics to StatsD, is also a little problematic. Not only did we have to do the work to setup our own reporter, with the help of the `Statix` library, we're not properly taking advantage of tagging or rich event event context. We'll have to do additional work to utilize our event context, either through tagging with a DogStatsD reporter (even more work to set up a whole new reporter!) or by updating the name of the event itself.
+Our reporting mechanism, currently set up to send metrics to StatsD, is also a little problematic. Not only did we have to do the work to setup our own reporter, with the help of the `Statix` library, we're not properly taking advantage of tagging or our rich event context. We'll have to do additional work to utilize our event context, either through tagging with a DogStatsD reporter (even more work to set up a whole new reporter!) or by updating the name of the event itself.
 
 "Wait a minute", you might be thinking, "I thought Telemetry was supposed to standardize instrumentation events and make it fast and easy to operate on and report those events. Why do I _still_ have to emit _all_ my own events and be on the hook for _all_ of my reporting needs?"
 
@@ -440,10 +444,10 @@ Our reporting mechanism, currently set up to send metrics to StatsD, is also a l
 
 Well the answer is, you _don't_ have to emit all of your own events _or_ be responsible for all of your reporting! Now that we understand _how_ to set up a Telemetry pipeline, and how it works under the hood to store and execute callbacks for events using ETS, we're ready to rely on some handy abstractions that additional Telemetry libraries provide.
 
-Surprise! Phoenix and Ecto are *already* emitting common events from source code, including request counts and duration. The Telemetry Metrics library will make it super easy for us to hook into these events without defining and attaching our own handler.
+Surprise! Phoenix and Ecto are *already* emitting common events from source code, including request counts and duration. The `Telemetry.Metrics` library will make it super easy for us to hook into these events without defining and attaching our own handlers.
 
-Further, Telemetry provides a number of reporting clients, including a StatsD reporter, that we can plug into our Telemetry Metrics module for free metrics reporting to StatsD _or_ DogStatsD, allowing us to take advantage of event metadata with tagging.
+Further, Telemetry provides a number of reporting clients, including a StatsD reporter, that we can plug into our `Telemetry.Metrics` module for free metrics reporting to StatsD _or_ DogStatsD, allowing us to take advantage of event metadata with tagging.
 
-In the next post, we'll leverage Telemetry Metrics and the Telemetry Statsd Reporter to listen for and report a number of useful VM, Phoenix and Ecto "Out Of The Box" metrics. In doing so, we'll abstract away the need for our custom `:telemetry.execute/3` calls, our custom handler _and_ our custom StatsD reporter.
+In the next post, we'll leverage Telemetry Metrics and the Telemetry Statsd Reporter to observe, format and report the Telemetry event we established here. In doing so, we'll abstract away the need for our custom handler _and_ our custom StatsD reporter.
 
 See you soon!
