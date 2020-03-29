@@ -8,8 +8,7 @@ defmodule Quantum.Telemetry do
 
   def init(_arg) do
     children = [
-      {TelemetryMetricsStatsd, metrics: metrics(), formatter: :datadog} # for datadog, add prefix: "quantum", global_tags: [env: Mix.env()] but global tags prob. best handled by DD agent conf
-      # {TelemetryMetricsStatsd, metrics: metrics()}
+      {TelemetryMetricsStatsd, metrics: metrics(), formatter: :datadog}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -17,13 +16,7 @@ defmodule Quantum.Telemetry do
 
   defp metrics do
     [
-      # VM Metrics - gauge
-      last_value("vm.memory.total", unit: :byte),
-      last_value("vm.total_run_queue_lengths.total"),
-      last_value("vm.total_run_queue_lengths.cpu"),
-      last_value("vm.total_run_queue_lengths.io"),
-
-      # Database Time Metrics - timing
+      # Database Time Metrics - Formats `timing` StatsD metric type
       summary(
         "quantum.repo.query.total_time",
         unit: {:native, :millisecond},
@@ -31,25 +24,25 @@ defmodule Quantum.Telemetry do
         tags: [:source, :command]
       ),
 
-      # Database Count Metrics - count
+      # Database Count Metrics - Formats `count` StatsD metric type
       counter(
         "quantum.repo.query.count",
         tag_values: &__MODULE__.query_metatdata/1,
         tags: [:source, :command]
       ),
 
-      # Phoenix Time Metrics - timing
+      # Phoenix Time Metrics - Formats `timing` StatsD metric type
       summary(
         "phoenix.router_dispatch.stop.duration",
         unit: {:native, :millisecond},
-        tags: [:plug, :plug_opts] # for datadog, add :route and view metric over route
+        tags: [:plug, :plug_opts]
       ),
 
-      # Phoenix Count Metrics - count
+      # Phoenix Count Metrics - Formats `count` StatsD metric type
       counter(
         "phoenix.router_dispatch.stop.count",
         tag_values: &__MODULE__.endpoint_metadata/1,
-        tags: [:plug, :plug_opts, :status] # for datadog, add :route and view metric over route
+        tags: [:plug, :plug_opts, :status]
       ),
 
       counter(
@@ -58,7 +51,7 @@ defmodule Quantum.Telemetry do
         tags: [:status, :request_path]
       ),
 
-      # LiveView metrics
+      # LiveView metrics - Instrumentation for a custom Telemetry event executed in `ButtonLive`
       summary(
         "live.handle_event.button_click.duration"
       ),
