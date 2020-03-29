@@ -16,6 +16,11 @@ defmodule Quantum.Telemetry do
 
   defp metrics do
     [
+      # Erlang VM Metrics - Formats `gauge` StatsD metric type
+      last_value("vm.memory.total", unit: :byte),
+      last_value("vm.total_run_queue_lengths.total"),
+      last_value("vm.total_run_queue_lengths.cpu"),
+
       # Database Time Metrics - Formats `timing` StatsD metric type
       summary(
         "quantum.repo.query.total_time",

@@ -40,8 +40,7 @@ defp metrics do
     # VM Metrics - gauge
     last_value("vm.memory.total", unit: :byte),
     last_value("vm.total_run_queue_lengths.total"),
-    last_value("vm.total_run_queue_lengths.cpu"),
-    last_value("vm.total_run_queue_lengths.io")
+    last_value("vm.total_run_queue_lengths.cpu")
   ]
 end
 ```
@@ -53,7 +52,6 @@ gauges: {
   'vm.memory.total': 49670008,
   'vm.total_run_queue_lengths.total': 0,
   'vm.total_run_queue_lengths.cpu': 0,
-  'vm.total_run_queue_lengths.io': 0
 }
 ```
 
@@ -63,4 +61,4 @@ You can also use the `telemetry_poller` library to emit measurements describing 
 
 ## Conclusion
 
-Once again we've seen that Erlang and Elixir's family of Telemetry libraries make it easy for us to achieve fairly comprehensive instrumentation with very little hand-rolled code. By adding the `telemetry_poller` library to our dependencies, we're ensuring our application will execute a set of Telemetry events describing Erlang VM measurements at regular intervals. We're observing these events, formatting them and sending them to StatsD with the help of `Telemetry.Metrics` and `TelemetryMetricsStatsd`, allowing us to paint an even fuller picture of the state of our Phoenix app at any given time. 
+Once again we've seen that Erlang and Elixir's family of Telemetry libraries make it easy for us to achieve fairly comprehensive instrumentation with very little hand-rolled code. By adding the `telemetry_poller` library to our dependencies, we're ensuring our application will execute a set of Telemetry events describing Erlang VM measurements at regular intervals. We're observing these events, formatting them and sending them to StatsD with the help of `Telemetry.Metrics` and `TelemetryMetricsStatsd`, allowing us to paint an even fuller picture of the state of our Phoenix app at any given time.
