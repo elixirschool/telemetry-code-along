@@ -19,12 +19,12 @@ defmodule Quantum.Telemetry do
       summary(
         "phoenix.request.duration",
         unit: {:native, :millisecond},
-        tags: [:plug, :plug_opts]
+        tags: [:request_path]
       ),
 
       counter(
         "phoenix.request.count",
-        tags: [:plug, :plug_opts]
+        tags: [:request_path]
       )
     ]
   end
