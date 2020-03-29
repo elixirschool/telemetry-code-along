@@ -5,7 +5,9 @@ defmodule QuantumWeb.UserController do
   alias Quantum.Accounts.User
 
   def new(conn, _params) do
+    start = System.monotonic_time()
     changeset = Accounts.change_user(%User{})
+    :telemetry.execute([:phoenix, :request], %{duration: System.monotonic_time() - start}, conn)
     render(conn, "new.html", changeset: changeset)
   end
 
