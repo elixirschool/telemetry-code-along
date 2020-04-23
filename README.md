@@ -29,4 +29,5 @@ Check out the blog series, Instrumenting Phoenix with Telemetry, here:
 * [Part III starting state branch](https://github.com/elixirschool/telemetry-code-along/tree/part-3-start)
 * [Part III solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-3-solution)
 * [Part IV starting state branch](https://github.com/elixirschool/telemetry-code-along/tree/part-4-start)
-* [Part IV solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-4-solution) 
+* [Part IV solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-4-solution)
+* [Adding LiveDashboard](https://github.com/elixirschool/telemetry-code-along/tree/live-dashboard)
