@@ -22,11 +22,12 @@ Check out the blog series, Instrumenting Phoenix with Telemetry, here:
 
 ### Follow Along With The Code
 
-* [Part I starting state branch](https://github.com/SophieDeBenedetto/quantum/tree/part-1-start)
-* [Part I solution branch](https://github.com/SophieDeBenedetto/quantum/tree/part-1-solution)
-* [Part II starting state branch](https://github.com/SophieDeBenedetto/quantum/tree/part-2-start)
-* [Part II solution branch](https://github.com/SophieDeBenedetto/quantum/tree/part-2-solution)
-* [Part III starting state branch](https://github.com/SophieDeBenedetto/quantum/tree/part-3-start)
-* [Part III solution branch](https://github.com/SophieDeBenedetto/quantum/tree/part-3-solution)
-* [Part IV starting state branch](https://github.com/SophieDeBenedetto/quantum/tree/part-4-start)
-* [Part IV solution branch](https://github.com/SophieDeBenedetto/quantum/tree/part-4-solution) 
+* [Part I starting state branch](https://github.com/elixirschool/telemetry-code-along/tree/part-1-start)
+* [Part I solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-1-solution)
+* [Part II starting state branch](https://github.com/elixirschool/telemetry-code-along/tree/part-2-start)
+* [Part II solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-2-solution)
+* [Part III starting state branch](https://github.com/elixirschool/telemetry-code-along/tree/part-3-start)
+* [Part III solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-3-solution)
+* [Part IV starting state branch](https://github.com/elixirschool/telemetry-code-along/tree/part-4-start)
+* [Part IV solution branch](https://github.com/elixirschool/telemetry-code-along/tree/part-4-solution)
+* [Adding LiveDashboard](https://github.com/elixirschool/telemetry-code-along/tree/live-dashboard)
