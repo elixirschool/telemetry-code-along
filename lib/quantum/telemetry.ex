@@ -14,7 +14,7 @@ defmodule Quantum.Telemetry do
     Supervisor.init(children, strategy: :one_for_one)
   end
 
-  defp metrics do
+  def metrics do
     [
       # Erlang VM Metrics - Formats `gauge` StatsD metric type
       last_value("vm.memory.total", unit: :byte),
@@ -65,7 +65,7 @@ defmodule Quantum.Telemetry do
         "live.handle_event.button_click.count",
         tag_values: &__MODULE__.live_view_metadata/1,
         tags: [:button]
-      )
+      ),
     ]
   end
 

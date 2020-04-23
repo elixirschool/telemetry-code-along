@@ -1,5 +1,6 @@
 defmodule QuantumWeb.Router do
   use QuantumWeb, :router
+  import Phoenix.LiveDashboard.Router
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -12,6 +13,13 @@ defmodule QuantumWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  if Mix.env() == :dev do
+    scope "/" do
+      pipe_through :browser
+      live_dashboard "/dashboard", metrics: Quantum.Telemetry
+    end
   end
 
   scope "/", QuantumWeb do

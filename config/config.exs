@@ -25,6 +25,8 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+config :quantum, QuantumWeb.Endpoint,
+  live_view: [signing_salt: "SECRET_SALT"]
 
 # config :my_app, QuantumWeb.Endpoint,
 #    live_view: [signing_salt: "SECRET_SALT"]

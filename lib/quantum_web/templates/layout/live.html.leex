@@ -30,7 +30,7 @@
             </ul>
             <span class="navbar-text">
               <ul class="navbar-nav mr-auto">
-                <%= if signed_in?(@socket) do %>
+                <%= if @current_user do %>
                   <%= link "Logout", to: Routes.session_path(@socket, :delete), method: :delete %>
                 <% else %>
                   <li class="nav-item active"><%= link "Log In", to: Routes.session_path(@socket, :new), method: :get, class: "nav-link" %></li>
