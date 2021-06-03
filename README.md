@@ -7,6 +7,7 @@ Quantum is a dummy Phoenix app used to illustrate instrumentation with Telemetry
 * Clone down this repo
 * `cd` into the repo and run `mix deps.get`
 * Then, run `npm install --prefix ./assets`
+* Set up the database: `mix ecto.setup`
 * Start the Phoenix server: `mix phx.server`
 
 To run with StatsD so that you can see your metrics processed, follow the StatsD installation instructions [here](https://anomaly.io/statsd-install-and-config/index.html).
